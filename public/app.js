@@ -1,3 +1,5 @@
+import { APP_VERSION } from "/version.js?v=2026.05.23.2";
+
 const state = {
   profile: null,
   sessionId: null,
@@ -14,12 +16,19 @@ const state = {
 const PROFILE_LIST_KEY = "chemCoachProfiles";
 const SELECTED_PROFILE_KEY = "chemCoachSelectedProfile";
 const LEGACY_STATE_KEY = "chemCoachState";
+const UPDATE_CHECK_INTERVAL_MS = 60_000;
+const CLIENT_VERSION = new URL(import.meta.url).searchParams.get("v") || APP_VERSION;
 const DEFAULT_PROFILES = [
   { id: "student", name: "Student", role: "Actual learner" },
   { id: "tester", name: "Tester", role: "Sandbox for parent testing" }
 ];
 
+let pendingUpdateVersion = null;
+
 const els = {
+  updateBanner: document.querySelector("#updateBanner"),
+  updateMessage: document.querySelector("#updateMessage"),
+  updateNowBtn: document.querySelector("#updateNowBtn"),
   profileGate: document.querySelector("#profileGate"),
   profileList: document.querySelector("#profileList"),
   profileForm: document.querySelector("#profileForm"),
@@ -63,6 +72,84 @@ async function api(path, options = {}) {
     throw new Error(payload.error || payload.detail || `Request failed: ${response.status}`);
   }
   return payload;
+}
+
+function normalizeVersion(version) {
+  return String(version ?? "").trim();
+}
+
+function renderUpdateBanner(version) {
+  pendingUpdateVersion = version;
+  els.updateMessage.textContent = `New version available (${version}).`;
+  els.updateBanner.classList.remove("hidden");
+}
+
+function hideUpdateBanner() {
+  pendingUpdateVersion = null;
+  els.updateBanner.classList.add("hidden");
+  els.updateNowBtn.disabled = false;
+  els.updateNowBtn.textContent = "Update";
+}
+
+async function checkForAppUpdate() {
+  try {
+    const payload = await api(`/api/version?client=${encodeURIComponent(CLIENT_VERSION)}&t=${Date.now()}`, {
+      cache: "no-store"
+    });
+    const serverVersion = normalizeVersion(payload.version);
+    els.envBadge.title = `App version ${CLIENT_VERSION}`;
+    if (serverVersion && serverVersion !== CLIENT_VERSION) {
+      renderUpdateBanner(serverVersion);
+      return;
+    }
+    hideUpdateBanner();
+  } catch {
+    els.envBadge.title = `App version ${CLIENT_VERSION}`;
+  }
+}
+
+async function clearBrowserAppCaches() {
+  if ("serviceWorker" in navigator) {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map((registration) => registration.unregister()));
+  }
+
+  if ("caches" in window) {
+    const keys = await caches.keys();
+    await Promise.all(keys.map((key) => caches.delete(key)));
+  }
+}
+
+async function updateToLatestVersion() {
+  if (!pendingUpdateVersion) {
+    return;
+  }
+
+  const version = pendingUpdateVersion;
+  els.updateNowBtn.disabled = true;
+  els.updateNowBtn.textContent = "Updating";
+
+  try {
+    await clearBrowserAppCaches();
+  } catch {
+    // A normal reload is still useful if cache APIs are unavailable or blocked.
+  } finally {
+    const nextUrl = new URL(window.location.href);
+    nextUrl.searchParams.set("v", version);
+    nextUrl.searchParams.set("updatedAt", String(Date.now()));
+    window.location.replace(nextUrl.toString());
+  }
+}
+
+function setupUpdateChecks() {
+  els.updateNowBtn.addEventListener("click", updateToLatestVersion);
+  checkForAppUpdate();
+  window.setInterval(checkForAppUpdate, UPDATE_CHECK_INTERVAL_MS);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      checkForAppUpdate();
+    }
+  });
 }
 
 function escapeHtml(value) {
@@ -613,6 +700,7 @@ els.profileForm.addEventListener("submit", (event) => {
 });
 
 renderProfiles();
+setupUpdateChecks();
 const selectedProfileId = localStorage.getItem(SELECTED_PROFILE_KEY);
 if (selectedProfileId && getProfiles().some((profile) => profile.id === selectedProfileId)) {
   selectProfile(selectedProfileId).catch((error) => {

@@ -96,6 +96,7 @@ The MVP uses browser `localStorage` for mastery so it works immediately.
 
 ```text
 GET  /api/health
+GET  /api/version
 GET  /api/topics
 POST /api/session/start
 POST /api/tutor/explain

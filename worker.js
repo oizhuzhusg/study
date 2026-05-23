@@ -2,6 +2,7 @@ import { defaultMastery, lessons, skills, topics } from "./src/shared/topics.js"
 import { firstQuestionForSkill, firstQuestionForTopic, getQuestion, nextQuestionForWeakSkills, questions } from "./src/shared/questions.js";
 import { applyMasteryUpdates, gradeAnswerFallback } from "./src/worker/grading.js";
 import { gradeAnswerWithOpenAI, transcribeAnswerPhoto } from "./src/worker/openai.js";
+import { APP_VERSION } from "./public/version.js";
 
 const JSON_HEADERS = {
   "Content-Type": "application/json; charset=utf-8",
@@ -84,9 +85,17 @@ async function routeApi(request, env, ctx) {
     return json({
       ok: true,
       app: "chem-coach",
+      version: APP_VERSION,
       env: env.APP_ENV || "local",
       openaiConfigured: Boolean(env.OPENAI_API_KEY),
       openaiModel: env.OPENAI_MODEL || "gpt-4.1-nano"
+    });
+  }
+
+  if (url.pathname === "/api/version" && request.method === "GET") {
+    return json({
+      version: APP_VERSION,
+      checkedAt: new Date().toISOString()
     });
   }
 

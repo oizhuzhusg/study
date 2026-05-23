@@ -75,6 +75,36 @@ button:disabled {
   color: #ffffff;
 }
 
+.update-banner {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  z-index: 18;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: min(520px, calc(100% - 24px));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: #17211d;
+  box-shadow: var(--shadow);
+  color: #ffffff;
+  padding: 10px 12px 10px 14px;
+  transform: translateX(-50%);
+}
+
+.update-banner span {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.update-banner button {
+  min-height: 34px;
+  white-space: nowrap;
+}
+
 .profile-gate {
   position: fixed;
   inset: 0;
@@ -632,6 +662,11 @@ button:focus-visible {
 @media (max-width: 760px) {
   .app-shell {
     padding: 14px;
+  }
+
+  .update-banner {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .topbar {
