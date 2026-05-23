@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chem Coach for NUSH</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">NUSH CM2131</p>
+          <h1>Chem Coach</h1>
+        </div>
+        <div class="session-meta">
+          <span id="envBadge">Local</span>
+          <span id="sessionBadge">Session starting</span>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="panel tutor-panel" aria-labelledby="tutor-title">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Today</p>
+              <h2 id="tutor-title">Precipitation Reactions</h2>
+            </div>
+            <button id="restartBtn" class="icon-button" type="button" title="重新开始">↺</button>
+          </div>
+          <div id="lessonBox" class="lesson-box"></div>
+          <div class="teacher-actions">
+            <button id="explainBtn" type="button">换一种方式讲</button>
+            <button id="sampleBtn" type="button">填入示例答案</button>
+          </div>
+          <div class="session-log" id="sessionLog" aria-live="polite"></div>
+        </section>
+
+        <section class="panel practice-panel" aria-labelledby="practice-title">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Practice</p>
+              <h2 id="practice-title">Current Question</h2>
+            </div>
+            <span id="difficultyTag" class="tag">diagnostic</span>
+          </div>
+
+          <article class="question-box">
+            <h3 id="questionTitle">Loading</h3>
+            <pre id="questionPrompt"></pre>
+          </article>
+
+          <div class="answer-tabs" role="tablist" aria-label="Answer mode">
+            <button id="typeModeBtn" class="tab active" type="button">输入答案</button>
+            <button id="photoModeBtn" class="tab" type="button">拍照上传</button>
+          </div>
+
+          <div id="photoArea" class="photo-area hidden">
+            <label class="upload-zone" for="photoInput">
+              <span>选择或拍摄手写答案照片</span>
+              <small>建议只拍答案区域，保持清晰和正向</small>
+            </label>
+            <input id="photoInput" type="file" accept="image/*" capture="environment" />
+            <img id="photoPreview" class="photo-preview hidden" alt="Uploaded answer preview" />
+            <div id="transcriptionBox" class="transcription hidden"></div>
+          </div>
+
+          <label class="answer-label" for="answerInput">学生答案</label>
+          <textarea id="answerInput" rows="8" placeholder="可以直接输入答案，也可以上传照片后确认识别结果。"></textarea>
+
+          <div class="practice-actions">
+            <button id="gradeBtn" class="primary" type="button">提交批改</button>
+            <button id="nextBtn" type="button" disabled>下一题</button>
+          </div>
+
+          <div id="feedbackBox" class="feedback hidden"></div>
+        </section>
+
+        <aside class="panel mastery-panel" aria-labelledby="mastery-title">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Mastery</p>
+              <h2 id="mastery-title">Skill Map</h2>
+            </div>
+          </div>
+          <div id="masteryList" class="mastery-list"></div>
+        </aside>
+      </main>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
