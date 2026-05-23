@@ -439,6 +439,29 @@ export function firstQuestionForTopic(topicId) {
   return questions.find((question) => question.topicId === topicId && question.difficulty === "diagnostic") ?? questions[0];
 }
 
+const firstQuestionBySkill = {
+  precipitate_concept: "ppt_concept_001",
+  solubility_prediction: "ppt_solubility_001",
+  formulae: "ppt_formulae_001",
+  balancing: "ppt_balance_001",
+  state_symbols: "ppt_states_001",
+  spectator_ions: "ppt_spectators_001",
+  ionic_equation: "ppt_ionic_001",
+  observation_inference: "ppt_observation_001",
+  explanation_quality: "ppt_concept_bridge_001"
+};
+
+export function firstQuestionForSkill(skillId, topicId = "precipitation_reactions") {
+  const explicitQuestion = firstQuestionBySkill[skillId] ? getQuestion(firstQuestionBySkill[skillId]) : null;
+  if (explicitQuestion && explicitQuestion.topicId === topicId) {
+    return explicitQuestion;
+  }
+  return (
+    questions.find((question) => question.topicId === topicId && question.focusSkills.includes(skillId)) ??
+    firstQuestionForTopic(topicId)
+  );
+}
+
 export function nextQuestionForWeakSkills(weakSkills = [], answeredQuestionId = null) {
   const answeredQuestion = answeredQuestionId ? getQuestion(answeredQuestionId) : null;
   for (const skill of weakSkills) {

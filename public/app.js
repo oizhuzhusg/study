@@ -2,6 +2,7 @@ const state = {
   profile: null,
   sessionId: null,
   topic: null,
+  selectedSkillId: null,
   lesson: null,
   mastery: null,
   skills: [],
@@ -27,6 +28,7 @@ const els = {
   profileBadge: document.querySelector("#profileBadge"),
   envBadge: document.querySelector("#envBadge"),
   sessionBadge: document.querySelector("#sessionBadge"),
+  topicList: document.querySelector("#topicList"),
   lessonBox: document.querySelector("#lessonBox"),
   restartBtn: document.querySelector("#restartBtn"),
   explainBtn: document.querySelector("#explainBtn"),
@@ -153,6 +155,7 @@ function saveLocalState() {
     profileStateKey(state.profile.id),
     JSON.stringify({
       mastery: state.mastery,
+      selectedSkillId: state.selectedSkillId,
       log: state.log.slice(0, 12)
     })
   );
@@ -199,6 +202,82 @@ function renderLesson() {
   `;
 }
 
+function masteryLevel(score) {
+  if (score >= 85) {
+    return { label: "Mastered", className: "mastered" };
+  }
+  if (score >= 60) {
+    return { label: "Practising", className: "practising" };
+  }
+  return { label: "Needs work", className: "needs-work" };
+}
+
+function topicAverage(topic) {
+  const mastery = state.mastery ?? {};
+  const values = topic.skillIds.map((skillId) => Number(mastery[skillId] ?? 35));
+  return Math.round(values.reduce((sum, score) => sum + score, 0) / Math.max(1, values.length));
+}
+
+function renderTopicMap() {
+  if (!state.topic || !state.skills.length) {
+    els.topicList.innerHTML = "";
+    return;
+  }
+
+  const average = topicAverage(state.topic);
+  const topicLevel = masteryLevel(average);
+  const skillLookup = new Map(state.skills.map((skill) => [skill.id, skill]));
+  const skillButtons = state.topic.skillIds
+    .map((skillId) => {
+      const skill = skillLookup.get(skillId);
+      if (!skill) {
+        return "";
+      }
+      const score = Number(state.mastery?.[skillId] ?? 35);
+      const level = masteryLevel(score);
+      const selected = state.selectedSkillId === skillId;
+      return `
+        <button class="topic-option skill-option ${selected ? "selected" : ""}" type="button" data-skill-id="${escapeHtml(skillId)}">
+          <span class="traffic-light ${level.className}" aria-hidden="true"></span>
+          <span>
+            <strong>${escapeHtml(skill.label)}</strong>
+            <span>${escapeHtml(skill.description)}</span>
+          </span>
+          <span class="topic-score">${score}%</span>
+        </button>
+      `;
+    })
+    .join("");
+
+  els.topicList.innerHTML = `
+    <button class="topic-option module-option ${state.selectedSkillId ? "" : "selected"}" type="button" data-topic-id="${escapeHtml(state.topic.id)}">
+      <span class="traffic-light ${topicLevel.className}" aria-hidden="true"></span>
+      <span>
+        <strong>${escapeHtml(state.topic.title)}</strong>
+        <span>${escapeHtml(state.topic.summary)}</span>
+      </span>
+      <span class="topic-score">${average}%</span>
+    </button>
+    <div class="topic-subtitle">Sub-skills</div>
+    ${skillButtons}
+  `;
+
+  const moduleButton = els.topicList.querySelector("[data-topic-id]");
+  moduleButton?.addEventListener("click", () => {
+    startSession({ selectedSkillId: null, reset: false }).catch((error) => {
+      els.lessonBox.textContent = error.message;
+    });
+  });
+
+  for (const button of els.topicList.querySelectorAll("[data-skill-id]")) {
+    button.addEventListener("click", () => {
+      startSession({ selectedSkillId: button.dataset.skillId, reset: false }).catch((error) => {
+        els.lessonBox.textContent = error.message;
+      });
+    });
+  }
+}
+
 function renderQuestion() {
   const question = state.currentQuestion;
   if (!question) {
@@ -223,10 +302,11 @@ function renderMastery() {
     .map((skill) => {
       const score = Number(mastery[skill.id] ?? 35);
       const level = score >= 75 ? "high" : score >= 50 ? "mid" : "low";
+      const lamp = masteryLevel(score);
       return `
         <div class="skill-row">
           <div class="skill-top">
-            <span class="skill-label">${escapeHtml(skill.label)}</span>
+            <span class="skill-label"><span class="traffic-light ${lamp.className}" aria-hidden="true"></span>${escapeHtml(skill.label)}</span>
             <span class="skill-score">${score}%</span>
           </div>
           <div class="bar" title="${escapeHtml(skill.description)}">
@@ -236,6 +316,7 @@ function renderMastery() {
       `;
     })
     .join("");
+  renderTopicMap();
 }
 
 function renderLog() {
@@ -311,15 +392,19 @@ async function compressImage(file) {
   return canvas.toDataURL("image/jpeg", 0.86);
 }
 
-async function startSession(reset = false) {
+async function startSession(options = {}) {
+  const reset = typeof options === "boolean" ? options : Boolean(options.reset);
+  const selectedSkillId = typeof options === "object" && "selectedSkillId" in options ? options.selectedSkillId : state.selectedSkillId;
   if (!state.profile) {
     return;
   }
   const local = reset ? {} : loadLocalState();
+  const effectiveSkillId = reset ? null : selectedSkillId;
   const payload = await api("/api/session/start", {
     method: "POST",
     body: JSON.stringify({
       topicId: "precipitation_reactions",
+      skillId: effectiveSkillId,
       studentId: state.profile.id,
       studentName: state.profile.name
     })
@@ -328,6 +413,7 @@ async function startSession(reset = false) {
 
   state.sessionId = payload.sessionId;
   state.topic = payload.topic;
+  state.selectedSkillId = effectiveSkillId ?? local.selectedSkillId ?? null;
   state.lesson = payload.lesson;
   state.skills = topicsPayload.skills;
   state.mastery = local.mastery || payload.mastery;
@@ -339,6 +425,7 @@ async function startSession(reset = false) {
   els.sessionBadge.textContent = `Session ${state.sessionId.slice(0, 8)}`;
   renderLesson();
   renderQuestion();
+  renderTopicMap();
   renderMastery();
   renderLog();
 
@@ -360,7 +447,8 @@ async function selectProfile(profileId) {
   localStorage.setItem(SELECTED_PROFILE_KEY, profile.id);
   migrateLegacyState(profile.id);
   els.profileGate.classList.add("hidden");
-  await startSession(false);
+  const local = loadLocalState();
+  await startSession({ selectedSkillId: local.selectedSkillId ?? null, reset: false });
 }
 
 async function addProfile(name) {
@@ -446,6 +534,7 @@ async function handleGrade() {
     state.pendingNextQuestion = payload.nextQuestion;
     renderFeedback(payload);
     renderMastery();
+    renderTopicMap();
     saveLocalState();
     els.nextBtn.disabled = false;
     addLog("Grading complete", `${state.currentQuestion.title}: ${payload.grade.score}/${payload.grade.max_score}`);
@@ -506,7 +595,7 @@ els.restartBtn.addEventListener("click", () => {
   if (state.profile) {
     localStorage.removeItem(profileStateKey(state.profile.id));
   }
-  startSession(true).catch((error) => {
+  startSession({ selectedSkillId: null, reset: true }).catch((error) => {
     els.lessonBox.textContent = error.message;
   });
 });

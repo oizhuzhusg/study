@@ -1,5 +1,5 @@
 import { defaultMastery, lessons, skills, topics } from "./src/shared/topics.js";
-import { firstQuestionForTopic, getQuestion, nextQuestionForWeakSkills, questions } from "./src/shared/questions.js";
+import { firstQuestionForSkill, firstQuestionForTopic, getQuestion, nextQuestionForWeakSkills, questions } from "./src/shared/questions.js";
 import { applyMasteryUpdates, gradeAnswerFallback } from "./src/worker/grading.js";
 import { gradeAnswerWithOpenAI, transcribeAnswerPhoto } from "./src/worker/openai.js";
 
@@ -102,7 +102,7 @@ async function routeApi(request, env, ctx) {
       return json({ error: `Unknown topic: ${topicId}` }, 400);
     }
 
-    const firstQuestion = firstQuestionForTopic(topicId);
+    const firstQuestion = body.skillId ? firstQuestionForSkill(body.skillId, topicId) : firstQuestionForTopic(topicId);
     return json({
       sessionId: crypto.randomUUID(),
       topic,

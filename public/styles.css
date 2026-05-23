@@ -224,7 +224,7 @@ button:disabled {
   gap: 8px;
 }
 
-.session-meta span,
+.session-meta > span,
 .tag {
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -237,7 +237,11 @@ button:disabled {
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(260px, 0.9fr) minmax(360px, 1.35fr) minmax(280px, 0.85fr);
+  grid-template-columns:
+    minmax(250px, 0.85fr)
+    minmax(260px, 0.95fr)
+    minmax(360px, 1.35fr)
+    minmax(280px, 0.85fr);
   gap: 16px;
   align-items: start;
 }
@@ -268,6 +272,76 @@ button:disabled {
   min-width: 40px;
   padding: 0;
   font-size: 18px;
+}
+
+.topic-list {
+  display: grid;
+  gap: 10px;
+}
+
+.topic-option {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: start;
+  width: 100%;
+  min-height: 64px;
+  padding: 12px;
+  text-align: left;
+}
+
+.topic-option.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.topic-option strong,
+.topic-option span {
+  display: block;
+}
+
+.topic-option span span,
+.topic-option > span:nth-child(2) > span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.topic-score {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.topic-subtitle {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.traffic-light {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  flex: 0 0 auto;
+  margin-top: 3px;
+  border-radius: 50%;
+  background: var(--danger);
+  box-shadow: 0 0 0 3px rgba(173, 52, 52, 0.12);
+}
+
+.traffic-light.practising {
+  background: var(--warn);
+  box-shadow: 0 0 0 3px rgba(180, 93, 24, 0.13);
+}
+
+.traffic-light.mastered {
+  background: #138a5a;
+  box-shadow: 0 0 0 3px rgba(19, 138, 90, 0.14);
 }
 
 .lesson-box {
@@ -504,6 +578,9 @@ button:focus-visible {
 }
 
 .skill-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   font-weight: 700;
 }
 
