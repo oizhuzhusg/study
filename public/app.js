@@ -1,4 +1,4 @@
-import { APP_VERSION } from "/version.js?v=2026.05.23.2";
+import { APP_VERSION } from "/version.js?v=2026.05.24.1";
 
 const state = {
   profile: null,
@@ -36,6 +36,7 @@ const els = {
   switchProfileBtn: document.querySelector("#switchProfileBtn"),
   profileBadge: document.querySelector("#profileBadge"),
   envBadge: document.querySelector("#envBadge"),
+  versionBadge: document.querySelector("#versionBadge"),
   sessionBadge: document.querySelector("#sessionBadge"),
   topicList: document.querySelector("#topicList"),
   lessonBox: document.querySelector("#lessonBox"),
@@ -91,6 +92,11 @@ function hideUpdateBanner() {
   els.updateNowBtn.textContent = "Update";
 }
 
+function renderAppVersion() {
+  els.versionBadge.textContent = `Version ${CLIENT_VERSION}`;
+  els.versionBadge.title = `Current app version ${CLIENT_VERSION}`;
+}
+
 async function checkForAppUpdate() {
   try {
     const payload = await api(`/api/version?client=${encodeURIComponent(CLIENT_VERSION)}&t=${Date.now()}`, {
@@ -142,6 +148,7 @@ async function updateToLatestVersion() {
 }
 
 function setupUpdateChecks() {
+  renderAppVersion();
   els.updateNowBtn.addEventListener("click", updateToLatestVersion);
   checkForAppUpdate();
   window.setInterval(checkForAppUpdate, UPDATE_CHECK_INTERVAL_MS);
