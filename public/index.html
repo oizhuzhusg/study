@@ -4,13 +4,50 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chem Coach for NUSH</title>
-    <link rel="stylesheet" href="/styles.css?v=2026.05.24.2" />
+    <link rel="stylesheet" href="/styles.css?v=2026.05.24.3" />
   </head>
   <body>
     <div id="updateBanner" class="update-banner hidden" role="status" aria-live="polite">
       <span id="updateMessage">New version available.</span>
       <button id="updateNowBtn" class="primary" type="button">Update</button>
     </div>
+
+    <dialog id="guideDialog" class="guide-dialog" aria-labelledby="guideTitle">
+      <div class="guide-content">
+        <div class="guide-header">
+          <div>
+            <p class="eyebrow">Guide</p>
+            <h2 id="guideTitle">How to Use Chem Coach</h2>
+          </div>
+          <button id="guideCloseBtn" class="icon-button" type="button" title="Close">×</button>
+        </div>
+
+        <section class="guide-section">
+          <h3>1. Choose the right profile</h3>
+          <p>Use Student for the real learner and Tester for experiments. Each profile has separate saved mastery and practice history.</p>
+        </section>
+
+        <section class="guide-section">
+          <h3>2. Pick a knowledge point</h3>
+          <p>Use Knowledge Points on the left to practise the full Precipitation Reactions module or one focused sub-skill.</p>
+        </section>
+
+        <section class="guide-section">
+          <h3>3. Learn, answer, and submit</h3>
+          <p>Read the concept and example, answer the current question, then submit for grading. Typed answers and photo uploads are both supported.</p>
+        </section>
+
+        <section class="guide-section">
+          <h3>4. Follow the mastery lights</h3>
+          <p>Green means mastered, yellow means practising, and red means the skill needs more work. The next question is chosen from weak areas.</p>
+        </section>
+
+        <section class="guide-section">
+          <h3>5. Keep versions fresh</h3>
+          <p>If a new version is available, an update banner appears. Click Update to reload the newest app without changing saved learner progress.</p>
+        </section>
+      </div>
+    </dialog>
 
     <div id="profileGate" class="profile-gate" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
       <div class="profile-dialog">
@@ -39,8 +76,9 @@
             <span>Profile</span>
             <strong id="profileBadge">No profile</strong>
           </button>
+          <button id="guideBtn" class="guide-button" type="button">Guide</button>
           <span id="envBadge">Local</span>
-          <span id="versionBadge">Version 2026.05.24.2</span>
+          <span id="versionBadge">Version 2026.05.24.3</span>
           <span id="sessionBadge">Session starting</span>
         </div>
       </header>
@@ -124,6 +162,6 @@
       </main>
     </div>
 
-    <script type="module" src="/app.js?v=2026.05.24.2"></script>
+    <script type="module" src="/app.js?v=2026.05.24.3"></script>
   </body>
 </html>

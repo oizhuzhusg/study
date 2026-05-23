@@ -14,6 +14,10 @@ The first MVP is a complete vertical slice for **Precipitation Reactions**:
 - adaptive next question selection
 - Cloudflare Worker deployment
 
+## User Guide
+
+See [docs/user-guide.md](docs/user-guide.md) for the parent/student usage guide.
+
 ## Local Setup
 
 Install dependencies:

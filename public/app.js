@@ -1,4 +1,4 @@
-import { APP_VERSION } from "/version.js?v=2026.05.24.2";
+import { APP_VERSION } from "/version.js?v=2026.05.24.3";
 
 const state = {
   profile: null,
@@ -29,6 +29,9 @@ const els = {
   updateBanner: document.querySelector("#updateBanner"),
   updateMessage: document.querySelector("#updateMessage"),
   updateNowBtn: document.querySelector("#updateNowBtn"),
+  guideDialog: document.querySelector("#guideDialog"),
+  guideBtn: document.querySelector("#guideBtn"),
+  guideCloseBtn: document.querySelector("#guideCloseBtn"),
   profileGate: document.querySelector("#profileGate"),
   profileList: document.querySelector("#profileList"),
   profileForm: document.querySelector("#profileForm"),
@@ -157,6 +160,22 @@ function setupUpdateChecks() {
       checkForAppUpdate();
     }
   });
+}
+
+function openGuide() {
+  if (typeof els.guideDialog.showModal === "function") {
+    els.guideDialog.showModal();
+    return;
+  }
+  els.guideDialog.setAttribute("open", "");
+}
+
+function closeGuide() {
+  if (typeof els.guideDialog.close === "function") {
+    els.guideDialog.close();
+    return;
+  }
+  els.guideDialog.removeAttribute("open");
 }
 
 function escapeHtml(value) {
@@ -685,6 +704,13 @@ els.gradeBtn.addEventListener("click", handleGrade);
 els.nextBtn.addEventListener("click", handleNextQuestion);
 els.sampleBtn.addEventListener("click", fillSampleAnswer);
 els.explainBtn.addEventListener("click", explainAgain);
+els.guideBtn.addEventListener("click", openGuide);
+els.guideCloseBtn.addEventListener("click", closeGuide);
+els.guideDialog.addEventListener("click", (event) => {
+  if (event.target === els.guideDialog) {
+    closeGuide();
+  }
+});
 els.restartBtn.addEventListener("click", () => {
   if (state.profile) {
     localStorage.removeItem(profileStateKey(state.profile.id));
