@@ -3,7 +3,7 @@
 This project is designed for:
 
 ```text
-local development -> git push -> Cloudflare Workers Builds -> staging/production Worker
+local development -> git push -> GitHub Actions -> staging/production Worker
 ```
 
 ## 1. Local
@@ -41,7 +41,47 @@ git push -u origin main
 git push -u origin develop
 ```
 
-## 3. Cloudflare Worker
+## 3. GitHub Actions Auto Deploy
+
+The repository includes `.github/workflows/deploy-cloudflare.yml`.
+
+Push behavior:
+
+```text
+develop -> chem-coach-staging
+main    -> chem-coach
+```
+
+The workflow runs:
+
+```bash
+npm install
+npm run check
+npm run deploy:staging     # develop only
+npm run deploy:production  # main only
+```
+
+Add these GitHub repository secrets:
+
+```text
+CLOUDFLARE_ACCOUNT_ID
+CLOUDFLARE_API_TOKEN
+```
+
+Create the Cloudflare API token from:
+
+```text
+Cloudflare dashboard
+-> My Profile
+-> API Tokens
+-> Create Token
+-> Custom token
+-> Edit Cloudflare Workers
+```
+
+Scope it to the account that owns `chem-coach`. Do not commit the token to the repository.
+
+## 4. Cloudflare Worker
 
 In Cloudflare Dashboard:
 
@@ -68,7 +108,7 @@ Non-production branches: develop
 Non-production deploy command: npx wrangler deploy --env staging
 ```
 
-## 4. Secrets
+## 5. Secrets
 
 Set:
 
@@ -79,7 +119,7 @@ npx wrangler secret put OPENAI_API_KEY --env production
 
 You can also set these secrets in the Cloudflare dashboard for each Worker environment.
 
-## 5. D1 Persistence, Later
+## 6. D1 Persistence, Later
 
 The MVP works without D1. When ready:
 
