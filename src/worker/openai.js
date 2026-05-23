@@ -99,7 +99,7 @@ async function callOpenAIJson(env, name, schema, input, maxOutputTokens = 1200) 
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: env.OPENAI_MODEL || "gpt-4.1-mini",
+      model: env.OPENAI_MODEL || "gpt-4.1-nano",
       input,
       text: {
         format: {
@@ -204,13 +204,14 @@ export async function gradeAnswerWithOpenAI(env, question, answerText) {
   const cappedScore = Math.max(0, Math.min(maxScore, Number(result.score ?? 0)));
   const allowedSkills = new Set(question.focusSkills);
   const weakSkills = (result.weak_skills ?? []).filter((skill) => allowedSkills.has(skill));
+  const localGrade = gradeWithRules(question, answerText);
   const masteryUpdates = (result.mastery_updates ?? []).filter((update) => allowedSkills.has(update.skill_id));
   return {
     ...result,
     score: cappedScore,
     max_score: maxScore,
     weak_skills: weakSkills,
-    mastery_updates: masteryUpdates,
+    mastery_updates: masteryUpdates.length ? masteryUpdates : localGrade.mastery_updates,
     source: "openai"
   };
 }

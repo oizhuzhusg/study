@@ -10,7 +10,7 @@
   },
   "vars": {
     "APP_ENV": "local",
-    "OPENAI_MODEL": "gpt-4.1-mini"
+    "OPENAI_MODEL": "gpt-4.1-nano"
   },
   "assets": {
     "directory": "./public",
@@ -23,14 +23,14 @@
       "name": "chem-coach-staging",
       "vars": {
         "APP_ENV": "staging",
-        "OPENAI_MODEL": "gpt-4.1-mini"
+        "OPENAI_MODEL": "gpt-4.1-nano"
       }
     },
     "production": {
       "name": "chem-coach",
       "vars": {
         "APP_ENV": "production",
-        "OPENAI_MODEL": "gpt-4.1-mini"
+        "OPENAI_MODEL": "gpt-4.1-nano"
       }
     }
   }

@@ -85,7 +85,8 @@ async function routeApi(request, env, ctx) {
       ok: true,
       app: "chem-coach",
       env: env.APP_ENV || "local",
-      openaiConfigured: Boolean(env.OPENAI_API_KEY)
+      openaiConfigured: Boolean(env.OPENAI_API_KEY),
+      openaiModel: env.OPENAI_MODEL || "gpt-4.1-nano"
     });
   }
 
