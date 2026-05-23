@@ -3,7 +3,7 @@
 This project is designed for:
 
 ```text
-local development -> git push -> GitHub Actions -> staging/production Worker
+local development -> git push -> Cloudflare Workers Builds -> staging/production Worker
 ```
 
 ## 1. Local
@@ -41,71 +41,142 @@ git push -u origin main
 git push -u origin develop
 ```
 
-## 3. GitHub Actions Auto Deploy
+## 3. Cloudflare Workers Builds
 
-The repository includes `.github/workflows/deploy-cloudflare.yml`.
+This project uses Cloudflare Workers, not Cloudflare Pages. The closest equivalent to a Git-backed Pages project is Cloudflare Workers Builds.
 
-Push behavior:
+Use two Workers Builds connections:
 
 ```text
-develop -> chem-coach-staging
-main    -> chem-coach
+chem-coach          listens to main
+chem-coach-staging  listens to develop
 ```
 
-The workflow runs:
+Recommended build settings:
+
+```text
+Repository: oizhuzhusg/study
+Root directory: /
+Build command: npm run check
+Production deploy command for chem-coach: npm run deploy:production
+Production deploy command for chem-coach-staging: npm run deploy:staging
+```
+
+Why two Workers instead of one Pages-style project:
+
+```text
+chem-coach is the real production Worker.
+chem-coach-staging is a separate staging Worker.
+Each Worker should have its own Git connection and branch.
+```
+
+Dashboard setup:
+
+```text
+Cloudflare Dashboard
+-> Workers & Pages
+-> chem-coach
+-> Settings
+-> Builds
+-> Connect
+-> GitHub
+-> oizhuzhusg/study
+-> Branch: main
+-> Root directory: /
+-> Build command: npm run check
+-> Deploy command: npm run deploy:production
+```
+
+Then repeat for staging:
+
+```text
+Cloudflare Dashboard
+-> Workers & Pages
+-> chem-coach-staging
+-> Settings
+-> Builds
+-> Connect
+-> GitHub
+-> oizhuzhusg/study
+-> Branch: develop
+-> Root directory: /
+-> Build command: npm run check
+-> Deploy command: npm run deploy:staging
+```
+
+The GitHub account and repository IDs are:
+
+```text
+provider_account_id: 263253517
+provider_account_name: oizhuzhusg
+repo_id: 1247554072
+repo_name: study
+```
+
+If using the Workers Builds API instead of the dashboard, first authorize the Cloudflare Workers and Pages GitHub App, then create a repository connection:
+
+```json
+{
+  "provider_type": "github",
+  "provider_account_id": "263253517",
+  "provider_account_name": "oizhuzhusg",
+  "repo_id": "1247554072",
+  "repo_name": "study"
+}
+```
+
+Production trigger body:
+
+```json
+{
+  "external_script_id": "<chem-coach worker tag>",
+  "repo_connection_uuid": "<repo connection uuid>",
+  "build_token_uuid": "<build token uuid>",
+  "trigger_name": "Deploy chem-coach production",
+  "build_command": "npm run check",
+  "deploy_command": "npm run deploy:production",
+  "root_directory": "/",
+  "branch_includes": ["main"],
+  "branch_excludes": [],
+  "path_includes": ["*"],
+  "path_excludes": []
+}
+```
+
+Staging trigger body:
+
+```json
+{
+  "external_script_id": "<chem-coach-staging worker tag>",
+  "repo_connection_uuid": "<repo connection uuid>",
+  "build_token_uuid": "<build token uuid>",
+  "trigger_name": "Deploy chem-coach staging",
+  "build_command": "npm run check",
+  "deploy_command": "npm run deploy:staging",
+  "root_directory": "/",
+  "branch_includes": ["develop"],
+  "branch_excludes": [],
+  "path_includes": ["*"],
+  "path_excludes": []
+}
+```
+
+After creating each trigger, manually trigger one first build for `main` and `develop`. Future pushes will deploy automatically.
+
+## 4. Existing Workers
+
+This repository currently deploys to two existing Workers:
+
+```text
+chem-coach
+chem-coach-staging
+```
+
+If recreating the project from scratch, deploy each Worker once before connecting Git:
 
 ```bash
-npm install
-npm run check
-npm run deploy:staging     # develop only
-npm run deploy:production  # main only
-```
-
-Add these GitHub repository secrets:
-
-```text
-CLOUDFLARE_ACCOUNT_ID
-CLOUDFLARE_API_TOKEN
-```
-
-Create the Cloudflare API token from:
-
-```text
-Cloudflare dashboard
--> My Profile
--> API Tokens
--> Create Token
--> Custom token
--> Edit Cloudflare Workers
-```
-
-Scope it to the account that owns `chem-coach`. Do not commit the token to the repository.
-
-## 4. Cloudflare Worker
-
-In Cloudflare Dashboard:
-
-```text
-Workers & Pages
--> Create application
--> Worker
--> Import a repository
--> Select the chem-coach GitHub repository
-```
-
-Use:
-
-```text
-Production branch: main
-Build command: npm run check
-Deploy command: npx wrangler deploy --env production
-```
-
-Enable non-production branch builds:
-
-```text
-Non-production branches: develop
-Non-production deploy command: npx wrangler deploy --env staging
+npm run deploy:production
+npm run deploy:staging
 ```
 
 ## 5. Secrets
