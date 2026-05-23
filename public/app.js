@@ -91,19 +91,19 @@ function renderLesson() {
 
   els.lessonBox.innerHTML = `
     <div class="lesson-block">
-      <h3>概念</h3>
+      <h3>Concept</h3>
       <p>${escapeHtml(lesson.short)}</p>
     </div>
     <div class="lesson-block">
-      <h3>例子</h3>
+      <h3>Example</h3>
       <p>${escapeHtml(lesson.example)}</p>
     </div>
     <div class="lesson-block">
-      <h3>解题步骤</h3>
+      <h3>Problem-Solving Steps</h3>
       <ol>${lesson.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>
     </div>
     <div class="lesson-block">
-      <h3>提醒</h3>
+      <h3>Reminder</h3>
       <p>${escapeHtml(lesson.keyReminder)}</p>
     </div>
   `;
@@ -165,26 +165,26 @@ function renderFeedback(payload) {
   const { grade, warning } = payload;
   const correct = grade.correct_points.length
     ? grade.correct_points.map((item) => `<li>${escapeHtml(item)}</li>`).join("")
-    : "<li>还没有明显命中的评分点。</li>";
+    : "<li>No clear rubric points were met yet.</li>";
   const missing = grade.missing_points.length
     ? grade.missing_points.map((item) => `<li>${escapeHtml(item)}</li>`).join("")
-    : "<li>没有明显缺失。</li>";
+    : "<li>No obvious missing points.</li>";
 
   els.feedbackBox.innerHTML = `
-    <h3>批改结果 <span class="score">${grade.score}/${grade.max_score}</span></h3>
+    <h3>Grading Result <span class="score">${grade.score}/${grade.max_score}</span></h3>
     <p>${escapeHtml(grade.feedback_to_student)}</p>
-    ${warning ? `<p>OpenAI 暂不可用，已使用本地规则批改：${escapeHtml(warning)}</p>` : ""}
+    ${warning ? `<p>OpenAI was unavailable, so local grading rules were used: ${escapeHtml(warning)}</p>` : ""}
     <div class="feedback-grid">
       <div>
-        <p><strong>做对的部分</strong></p>
+        <p><strong>What went well</strong></p>
         <ul class="feedback-list">${correct}</ul>
       </div>
       <div>
-        <p><strong>需要加强</strong></p>
+        <p><strong>Needs strengthening</strong></p>
         <ul class="feedback-list">${missing}</ul>
       </div>
     </div>
-    <p><strong>下一步：</strong>${escapeHtml(grade.next_action)}</p>
+    <p><strong>Next step:</strong> ${escapeHtml(grade.next_action)}</p>
   `;
   els.feedbackBox.classList.remove("hidden");
 }
@@ -245,9 +245,9 @@ async function startSession(reset = false) {
   renderLog();
 
   if (reset) {
-    addLog("重新开始", "已重置到 Precipitation Reactions 的诊断题。");
+    addLog("Restarted", "Reset to the diagnostic question for Precipitation Reactions.");
   } else if (!state.log.length) {
-    addLog("开始学习", "先做一个短诊断，再根据答案补讲和补题。");
+    addLog("Session started", "Start with a short diagnostic, then the tutor will teach and practise based on the answer.");
   }
 }
 
@@ -258,7 +258,7 @@ async function handlePhotoUpload(event) {
   }
 
   els.transcriptionBox.classList.remove("hidden");
-  els.transcriptionBox.textContent = "正在压缩并识别照片...";
+  els.transcriptionBox.textContent = "Compressing and reading the photo...";
   els.gradeBtn.disabled = true;
 
   try {
@@ -277,10 +277,10 @@ async function handlePhotoUpload(event) {
     const transcription = payload.transcription;
     els.answerInput.value = transcription.recognized_answer;
     els.transcriptionBox.innerHTML = `
-      <strong>识别结果已填入答案框。</strong><br />
-      ${escapeHtml(transcription.uncertain_parts.join(" ") || "没有明显不确定区域。")}
+      <strong>The transcription has been filled into the answer box.</strong><br />
+      ${escapeHtml(transcription.uncertain_parts.join(" ") || "No clearly uncertain parts.")}
     `;
-    addLog("照片识别", transcription.source === "demo" ? "当前使用 demo 识别结果；配置 OpenAI key 后会读取真实手写答案。" : "已读取手写答案，请确认后提交批改。");
+    addLog("Photo transcription", transcription.source === "demo" ? "Using the demo transcription because no OpenAI key is configured yet." : "The handwritten answer was read. Confirm it before grading.");
   } catch (error) {
     els.transcriptionBox.textContent = error.message;
   } finally {
@@ -296,7 +296,7 @@ async function handleGrade() {
   }
 
   els.gradeBtn.disabled = true;
-  els.gradeBtn.textContent = "批改中";
+  els.gradeBtn.textContent = "Grading";
 
   try {
     const payload = await api("/api/answer/grade", {
@@ -315,13 +315,13 @@ async function handleGrade() {
     renderMastery();
     saveLocalState();
     els.nextBtn.disabled = false;
-    addLog("完成批改", `${state.currentQuestion.title}: ${payload.grade.score}/${payload.grade.max_score}`);
+    addLog("Grading complete", `${state.currentQuestion.title}: ${payload.grade.score}/${payload.grade.max_score}`);
   } catch (error) {
     els.feedbackBox.innerHTML = `<p>${escapeHtml(error.message)}</p>`;
     els.feedbackBox.classList.remove("hidden");
   } finally {
     els.gradeBtn.disabled = false;
-    els.gradeBtn.textContent = "提交批改";
+    els.gradeBtn.textContent = "Submit for Grading";
   }
 }
 
@@ -331,7 +331,7 @@ function handleNextQuestion() {
   }
   state.currentQuestion = state.pendingNextQuestion;
   renderQuestion();
-  addLog("下一题", `进入 ${state.currentQuestion.title}。`);
+  addLog("Next question", `Moved to ${state.currentQuestion.title}.`);
 }
 
 function fillSampleAnswer() {
@@ -357,7 +357,7 @@ function fillSampleAnswer() {
 
 function explainAgain() {
   addLog(
-    "换一种方式讲",
+    "Explained differently",
     "Think of precipitation as ions meeting in water and forming a solid that can no longer stay dissolved."
   );
 }

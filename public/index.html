@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,12 +26,12 @@
               <p class="eyebrow">Today</p>
               <h2 id="tutor-title">Precipitation Reactions</h2>
             </div>
-            <button id="restartBtn" class="icon-button" type="button" title="重新开始">↺</button>
+            <button id="restartBtn" class="icon-button" type="button" title="Restart">↺</button>
           </div>
           <div id="lessonBox" class="lesson-box"></div>
           <div class="teacher-actions">
-            <button id="explainBtn" type="button">换一种方式讲</button>
-            <button id="sampleBtn" type="button">填入示例答案</button>
+            <button id="explainBtn" type="button">Explain Differently</button>
+            <button id="sampleBtn" type="button">Fill Sample Answer</button>
           </div>
           <div class="session-log" id="sessionLog" aria-live="polite"></div>
         </section>
@@ -51,26 +51,26 @@
           </article>
 
           <div class="answer-tabs" role="tablist" aria-label="Answer mode">
-            <button id="typeModeBtn" class="tab active" type="button">输入答案</button>
-            <button id="photoModeBtn" class="tab" type="button">拍照上传</button>
+            <button id="typeModeBtn" class="tab active" type="button">Type Answer</button>
+            <button id="photoModeBtn" class="tab" type="button">Upload Photo</button>
           </div>
 
           <div id="photoArea" class="photo-area hidden">
             <label class="upload-zone" for="photoInput">
-              <span>选择或拍摄手写答案照片</span>
-              <small>建议只拍答案区域，保持清晰和正向</small>
+              <span>Choose or take a photo of the handwritten answer</span>
+              <small>Crop to the answer area and keep the photo clear and upright</small>
             </label>
             <input id="photoInput" type="file" accept="image/*" capture="environment" />
             <img id="photoPreview" class="photo-preview hidden" alt="Uploaded answer preview" />
             <div id="transcriptionBox" class="transcription hidden"></div>
           </div>
 
-          <label class="answer-label" for="answerInput">学生答案</label>
-          <textarea id="answerInput" rows="8" placeholder="可以直接输入答案，也可以上传照片后确认识别结果。"></textarea>
+          <label class="answer-label" for="answerInput">Student Answer</label>
+          <textarea id="answerInput" rows="8" placeholder="Type the answer here, or upload a photo and confirm the transcription."></textarea>
 
           <div class="practice-actions">
-            <button id="gradeBtn" class="primary" type="button">提交批改</button>
-            <button id="nextBtn" type="button" disabled>下一题</button>
+            <button id="gradeBtn" class="primary" type="button">Submit for Grading</button>
+            <button id="nextBtn" type="button" disabled>Next Question</button>
           </div>
 
           <div id="feedbackBox" class="feedback hidden"></div>
