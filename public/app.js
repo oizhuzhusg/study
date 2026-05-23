@@ -1,4 +1,5 @@
 const state = {
+  profile: null,
   sessionId: null,
   topic: null,
   lesson: null,
@@ -9,7 +10,21 @@ const state = {
   log: []
 };
 
+const PROFILE_LIST_KEY = "chemCoachProfiles";
+const SELECTED_PROFILE_KEY = "chemCoachSelectedProfile";
+const LEGACY_STATE_KEY = "chemCoachState";
+const DEFAULT_PROFILES = [
+  { id: "student", name: "Student", role: "Actual learner" },
+  { id: "tester", name: "Tester", role: "Sandbox for parent testing" }
+];
+
 const els = {
+  profileGate: document.querySelector("#profileGate"),
+  profileList: document.querySelector("#profileList"),
+  profileForm: document.querySelector("#profileForm"),
+  profileNameInput: document.querySelector("#profileNameInput"),
+  switchProfileBtn: document.querySelector("#switchProfileBtn"),
+  profileBadge: document.querySelector("#profileBadge"),
   envBadge: document.querySelector("#envBadge"),
   sessionBadge: document.querySelector("#sessionBadge"),
   lessonBox: document.querySelector("#lessonBox"),
@@ -57,9 +72,84 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+function readJsonStorage(key, fallback) {
+  try {
+    return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
+  } catch {
+    return fallback;
+  }
+}
+
+function getProfiles() {
+  const profiles = readJsonStorage(PROFILE_LIST_KEY, null);
+  if (!Array.isArray(profiles) || profiles.length === 0) {
+    localStorage.setItem(PROFILE_LIST_KEY, JSON.stringify(DEFAULT_PROFILES));
+    return [...DEFAULT_PROFILES];
+  }
+  return profiles;
+}
+
+function saveProfiles(profiles) {
+  localStorage.setItem(PROFILE_LIST_KEY, JSON.stringify(profiles));
+}
+
+function profileStateKey(profileId) {
+  return `chemCoachState:${profileId}`;
+}
+
+function migrateLegacyState(profileId) {
+  if (profileId !== "student") {
+    return;
+  }
+  const legacyState = localStorage.getItem(LEGACY_STATE_KEY);
+  const studentKey = profileStateKey(profileId);
+  if (legacyState && !localStorage.getItem(studentKey)) {
+    localStorage.setItem(studentKey, legacyState);
+    localStorage.removeItem(LEGACY_STATE_KEY);
+  }
+}
+
+function renderProfiles() {
+  const profiles = getProfiles();
+  els.profileList.innerHTML = profiles
+    .map((profile) => {
+      const savedState = readJsonStorage(profileStateKey(profile.id), {});
+      const savedCount = savedState.mastery ? Object.values(savedState.mastery).filter((score) => Number(score) !== 35).length : 0;
+      const progressLabel = savedCount ? `${savedCount} skills have progress` : "No saved progress yet";
+      return `
+        <button class="profile-option" type="button" data-profile-id="${escapeHtml(profile.id)}">
+          <span>
+            <strong>${escapeHtml(profile.name)}</strong>
+            <span>${escapeHtml(profile.role || progressLabel)} · ${escapeHtml(progressLabel)}</span>
+          </span>
+          <span>Open</span>
+        </button>
+      `;
+    })
+    .join("");
+
+  for (const button of els.profileList.querySelectorAll("[data-profile-id]")) {
+    button.addEventListener("click", () => {
+      selectProfile(button.dataset.profileId);
+    });
+  }
+}
+
+function slugifyProfileName(name) {
+  const base = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 28);
+  return base || `profile-${Date.now()}`;
+}
+
 function saveLocalState() {
+  if (!state.profile) {
+    return;
+  }
   localStorage.setItem(
-    "chemCoachState",
+    profileStateKey(state.profile.id),
     JSON.stringify({
       mastery: state.mastery,
       log: state.log.slice(0, 12)
@@ -68,11 +158,10 @@ function saveLocalState() {
 }
 
 function loadLocalState() {
-  try {
-    return JSON.parse(localStorage.getItem("chemCoachState") || "{}");
-  } catch {
+  if (!state.profile) {
     return {};
   }
+  return readJsonStorage(profileStateKey(state.profile.id), {});
 }
 
 function addLog(title, body) {
@@ -222,10 +311,17 @@ async function compressImage(file) {
 }
 
 async function startSession(reset = false) {
+  if (!state.profile) {
+    return;
+  }
   const local = reset ? {} : loadLocalState();
   const payload = await api("/api/session/start", {
     method: "POST",
-    body: JSON.stringify({ topicId: "precipitation_reactions" })
+    body: JSON.stringify({
+      topicId: "precipitation_reactions",
+      studentId: state.profile.id,
+      studentName: state.profile.name
+    })
   });
   const topicsPayload = await api("/api/topics");
 
@@ -238,6 +334,7 @@ async function startSession(reset = false) {
   state.log = local.log || [];
 
   els.envBadge.textContent = "Worker";
+  els.profileBadge.textContent = state.profile.name;
   els.sessionBadge.textContent = `Session ${state.sessionId.slice(0, 8)}`;
   renderLesson();
   renderQuestion();
@@ -249,6 +346,37 @@ async function startSession(reset = false) {
   } else if (!state.log.length) {
     addLog("Session started", "Start with a short diagnostic, then the tutor will teach and practise based on the answer.");
   }
+}
+
+async function selectProfile(profileId) {
+  const profiles = getProfiles();
+  const profile = profiles.find((item) => item.id === profileId) ?? profiles[0];
+  state.profile = profile;
+  localStorage.setItem(SELECTED_PROFILE_KEY, profile.id);
+  migrateLegacyState(profile.id);
+  els.profileGate.classList.add("hidden");
+  await startSession(false);
+}
+
+async function addProfile(name) {
+  const trimmed = name.trim();
+  if (!trimmed) {
+    return;
+  }
+  const profiles = getProfiles();
+  const baseId = slugifyProfileName(trimmed);
+  let id = baseId;
+  let suffix = 2;
+  while (profiles.some((profile) => profile.id === id)) {
+    id = `${baseId}-${suffix}`;
+    suffix += 1;
+  }
+  const profile = { id, name: trimmed, role: "Custom profile" };
+  profiles.push(profile);
+  saveProfiles(profiles);
+  renderProfiles();
+  els.profileNameInput.value = "";
+  await selectProfile(profile.id);
 }
 
 async function handlePhotoUpload(event) {
@@ -370,12 +498,32 @@ els.nextBtn.addEventListener("click", handleNextQuestion);
 els.sampleBtn.addEventListener("click", fillSampleAnswer);
 els.explainBtn.addEventListener("click", explainAgain);
 els.restartBtn.addEventListener("click", () => {
-  localStorage.removeItem("chemCoachState");
+  if (state.profile) {
+    localStorage.removeItem(profileStateKey(state.profile.id));
+  }
   startSession(true).catch((error) => {
     els.lessonBox.textContent = error.message;
   });
 });
-
-startSession().catch((error) => {
-  els.lessonBox.textContent = error.message;
+els.switchProfileBtn.addEventListener("click", () => {
+  renderProfiles();
+  els.profileGate.classList.remove("hidden");
 });
+els.profileForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  addProfile(els.profileNameInput.value).catch((error) => {
+    els.profileNameInput.setCustomValidity(error.message);
+    els.profileNameInput.reportValidity();
+    els.profileNameInput.setCustomValidity("");
+  });
+});
+
+renderProfiles();
+const selectedProfileId = localStorage.getItem(SELECTED_PROFILE_KEY);
+if (selectedProfileId && getProfiles().some((profile) => profile.id === selectedProfileId)) {
+  selectProfile(selectedProfileId).catch((error) => {
+    els.lessonBox.textContent = error.message;
+  });
+} else {
+  els.profileGate.classList.remove("hidden");
+}

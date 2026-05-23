@@ -35,6 +35,15 @@ input {
   font: inherit;
 }
 
+input {
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 12px;
+  color: var(--text);
+  background: var(--surface);
+}
+
 button {
   border: 1px solid var(--line);
   background: var(--surface);
@@ -64,6 +73,91 @@ button:disabled {
 .primary:hover:not(:disabled) {
   background: var(--accent-dark);
   color: #ffffff;
+}
+
+.profile-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(246, 247, 249, 0.88);
+  backdrop-filter: blur(8px);
+}
+
+.profile-dialog {
+  width: min(560px, 100%);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 22px;
+}
+
+.profile-dialog h2 {
+  margin: 0;
+  font-size: 26px;
+  letter-spacing: 0;
+}
+
+.profile-copy {
+  margin: 8px 0 18px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.profile-list {
+  display: grid;
+  gap: 10px;
+}
+
+.profile-option {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  min-height: 58px;
+  text-align: left;
+  padding: 12px;
+}
+
+.profile-option strong,
+.profile-option span {
+  display: block;
+}
+
+.profile-option span {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.profile-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.profile-form label {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.profile-form-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.profile-switch {
+  border-radius: 999px;
+  min-height: 31px;
+  padding: 6px 10px;
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .app-shell {
@@ -458,6 +552,10 @@ button:focus-visible {
   }
 
   .feedback-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-form-row {
     grid-template-columns: 1fr;
   }
 }

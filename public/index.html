@@ -7,6 +7,22 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
+    <div id="profileGate" class="profile-gate" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+      <div class="profile-dialog">
+        <p class="eyebrow">Profile</p>
+        <h2 id="profileTitle">Choose a Learner</h2>
+        <p class="profile-copy">Progress is stored separately for each profile on this browser.</p>
+        <div id="profileList" class="profile-list"></div>
+        <form id="profileForm" class="profile-form">
+          <label for="profileNameInput">Add a profile</label>
+          <div class="profile-form-row">
+            <input id="profileNameInput" type="text" maxlength="32" placeholder="e.g. Practice Tester" autocomplete="off" />
+            <button class="primary" type="submit">Add</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <div class="app-shell">
       <header class="topbar">
         <div>
@@ -14,6 +30,8 @@
           <h1>Chem Coach</h1>
         </div>
         <div class="session-meta">
+          <button id="switchProfileBtn" class="profile-switch" type="button">Choose Profile</button>
+          <span id="profileBadge">No profile</span>
           <span id="envBadge">Local</span>
           <span id="sessionBadge">Session starting</span>
         </div>
