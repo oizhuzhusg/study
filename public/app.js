@@ -116,13 +116,14 @@ function renderProfiles() {
       const savedState = readJsonStorage(profileStateKey(profile.id), {});
       const savedCount = savedState.mastery ? Object.values(savedState.mastery).filter((score) => Number(score) !== 35).length : 0;
       const progressLabel = savedCount ? `${savedCount} skills have progress` : "No saved progress yet";
+      const selected = state.profile?.id === profile.id;
       return `
-        <button class="profile-option" type="button" data-profile-id="${escapeHtml(profile.id)}">
+        <button class="profile-option ${selected ? "selected" : ""}" type="button" data-profile-id="${escapeHtml(profile.id)}">
           <span>
             <strong>${escapeHtml(profile.name)}</strong>
             <span>${escapeHtml(profile.role || progressLabel)} · ${escapeHtml(progressLabel)}</span>
           </span>
-          <span>Open</span>
+          <span>${selected ? "Current" : "Open"}</span>
         </button>
       `;
     })
@@ -351,6 +352,10 @@ async function startSession(reset = false) {
 async function selectProfile(profileId) {
   const profiles = getProfiles();
   const profile = profiles.find((item) => item.id === profileId) ?? profiles[0];
+  if (state.profile?.id === profile.id && state.sessionId) {
+    els.profileGate.classList.add("hidden");
+    return;
+  }
   state.profile = profile;
   localStorage.setItem(SELECTED_PROFILE_KEY, profile.id);
   migrateLegacyState(profile.id);

@@ -123,6 +123,11 @@ button:disabled {
   padding: 12px;
 }
 
+.profile-option.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
 .profile-option strong,
 .profile-option span {
   display: block;
@@ -152,11 +157,29 @@ button:disabled {
 }
 
 .profile-switch {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border-color: var(--accent);
   border-radius: 999px;
-  min-height: 31px;
-  padding: 6px 10px;
+  min-height: 34px;
+  padding: 6px 12px;
+  background: var(--accent-soft);
   color: var(--accent-dark);
-  font-size: 12px;
+}
+
+.profile-switch span {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.profile-switch strong {
+  font-size: 13px;
   font-weight: 800;
 }
 
