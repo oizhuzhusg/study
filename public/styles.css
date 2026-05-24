@@ -417,6 +417,11 @@ button:disabled {
   text-transform: uppercase;
 }
 
+.section-subtitle {
+  margin-top: 12px;
+  color: var(--accent-dark);
+}
+
 .traffic-light {
   display: inline-block;
   width: 11px;

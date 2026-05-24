@@ -242,8 +242,289 @@ export const questions = [
     focusSkills: ["observation_inference", "acid_base_basics", "experimental_chemistry"]
   },
   {
+    id: "sec2_diag_001",
+    topicId: "sec2_chemistry_ii",
+    type: "diagnostic",
+    difficulty: "diagnostic",
+    title: "Sec 2 reaction map",
+    prompt:
+      "Classify each situation and give the key evidence.\n\n1. Mixing two clear solutions gives a white solid.\n2. Hydrochloric acid is titrated with sodium hydroxide using an indicator.\n3. Zinc is placed in copper(II) sulfate solution and a brown solid forms.",
+    expectedAnswer:
+      "1. Precipitation: an insoluble white solid forms. 2. Acid-base neutralisation / volumetric analysis: acid and alkali react, and the indicator endpoint shows the neutralisation point. 3. Redox displacement: zinc displaces copper; zinc is oxidised and copper(II) ions are reduced to copper metal.",
+    rubric: [
+      {
+        id: "classify_precipitation",
+        skill: "precipitate_concept",
+        points: 1,
+        criterion: "Classifies the white solid situation as precipitation."
+      },
+      {
+        id: "classify_titration",
+        skill: "volumetric_analysis",
+        points: 1,
+        criterion: "Classifies the acid-alkali indicator situation as titration or volumetric analysis."
+      },
+      {
+        id: "neutralisation",
+        skill: "acid_base_reactions",
+        points: 1,
+        criterion: "Identifies acid + alkali as neutralisation."
+      },
+      {
+        id: "classify_redox",
+        skill: "redox_concepts",
+        points: 1,
+        criterion: "Classifies the zinc/copper(II) sulfate reaction as redox or displacement."
+      },
+      {
+        id: "observation_evidence",
+        skill: "observation_inference",
+        points: 1,
+        criterion: "Uses observations as evidence rather than only naming topics."
+      }
+    ],
+    focusSkills: [
+      "precipitate_concept",
+      "volumetric_analysis",
+      "acid_base_reactions",
+      "redox_concepts",
+      "observation_inference"
+    ],
+    nextByWeakSkill: {
+      precipitate_concept: "ppt_concept_001",
+      volumetric_analysis: "sec2_titration_001",
+      acid_base_reactions: "sec2_acid_base_001",
+      redox_concepts: "sec2_redox_001",
+      observation_inference: "sec2_qa_001"
+    }
+  },
+  {
+    id: "sec2_acid_base_001",
+    topicId: "sec2_chemistry_ii",
+    type: "acid_base",
+    difficulty: "basic",
+    title: "Acid-base reaction",
+    prompt:
+      "Dilute sulfuric acid reacts with potassium hydroxide solution.\n\n1. Name the type of reaction.\n2. Write the word equation.\n3. Write the balanced symbol equation.",
+    expectedAnswer:
+      "This is neutralisation. Sulfuric acid + potassium hydroxide -> potassium sulfate + water. H2SO4 + 2KOH -> K2SO4 + 2H2O.",
+    rubric: [
+      {
+        id: "neutralisation",
+        skill: "acid_base_reactions",
+        points: 1,
+        criterion: "Identifies the reaction as neutralisation."
+      },
+      {
+        id: "potassium_sulfate",
+        skill: "salt_preparation",
+        points: 1,
+        criterion: "Names potassium sulfate as the salt formed."
+      },
+      {
+        id: "balanced_acid_base",
+        skill: "balancing",
+        points: 1,
+        criterion: "Writes H2SO4 + 2KOH -> K2SO4 + 2H2O or an equivalent balanced equation."
+      }
+    ],
+    focusSkills: ["acid_base_reactions", "salt_preparation", "balancing"]
+  },
+  {
+    id: "sec2_salt_prep_001",
+    topicId: "sec2_chemistry_ii",
+    type: "salt_preparation",
+    difficulty: "basic",
+    title: "Prepare a soluble salt",
+    prompt:
+      "A student wants to prepare dry crystals of copper(II) sulfate from dilute sulfuric acid and excess copper(II) oxide.\n\nPut these ideas in a sensible order and explain why excess solid is used: warm acid, add copper(II) oxide until no more reacts, filter, evaporate, crystallise, dry.",
+    expectedAnswer:
+      "Warm the acid, add excess copper(II) oxide until no more reacts, filter off the excess solid, evaporate the filtrate to concentrate it, allow crystals to form, then dry the crystals. Excess solid ensures all the acid has reacted and can be removed by filtration.",
+    rubric: [
+      {
+        id: "salt_prep_order",
+        skill: "salt_preparation",
+        points: 1,
+        criterion: "Gives a sensible sequence for preparing soluble salt crystals."
+      },
+      {
+        id: "excess_solid",
+        skill: "salt_preparation",
+        points: 1,
+        criterion: "Explains that excess insoluble base ensures acid is fully reacted."
+      },
+      {
+        id: "filter_crystallise",
+        skill: "experimental_chemistry",
+        points: 1,
+        criterion: "Includes filtration and crystallisation/evaporation."
+      }
+    ],
+    focusSkills: ["salt_preparation", "experimental_chemistry", "explanation_quality"]
+  },
+  {
+    id: "sec2_redox_001",
+    topicId: "sec2_chemistry_ii",
+    type: "redox",
+    difficulty: "basic",
+    title: "Zinc displacement",
+    prompt:
+      "Zinc powder is added to copper(II) sulfate solution. The blue colour fades and a brown solid forms.\n\n1. What is the brown solid?\n2. Explain why this is a redox reaction.",
+    expectedAnswer:
+      "The brown solid is copper. Zinc is oxidised to Zn2+ and Cu2+ is reduced to copper metal, so electron transfer occurs.",
+    rubric: [
+      {
+        id: "copper_solid",
+        skill: "observation_inference",
+        points: 1,
+        criterion: "Identifies the brown solid as copper."
+      },
+      {
+        id: "zinc_oxidised",
+        skill: "redox_concepts",
+        points: 1,
+        criterion: "States that zinc is oxidised to Zn2+."
+      },
+      {
+        id: "copper_reduced",
+        skill: "redox_concepts",
+        points: 1,
+        criterion: "States that Cu2+ is reduced to copper."
+      }
+    ],
+    focusSkills: ["redox_concepts", "observation_inference", "explanation_quality"]
+  },
+  {
+    id: "sec2_oxidation_states_001",
+    topicId: "sec2_chemistry_ii",
+    type: "oxidation_states",
+    difficulty: "medium",
+    title: "Oxidation state changes",
+    prompt:
+      "In this reaction, identify what is oxidised and what is reduced using oxidation states:\n\nFe2O3 + 3CO -> 2Fe + 3CO2",
+    expectedAnswer:
+      "Iron in Fe2O3 is reduced from +3 to 0. Carbon in CO is oxidised from +2 to +4 in CO2.",
+    rubric: [
+      {
+        id: "iron_reduced",
+        skill: "oxidation_states",
+        points: 1,
+        criterion: "States that iron is reduced from +3 to 0."
+      },
+      {
+        id: "carbon_oxidised",
+        skill: "oxidation_states",
+        points: 1,
+        criterion: "States that carbon is oxidised from +2 to +4."
+      },
+      {
+        id: "redox_terms",
+        skill: "redox_concepts",
+        points: 1,
+        criterion: "Uses oxidation/reduction terms correctly."
+      }
+    ],
+    focusSkills: ["oxidation_states", "redox_concepts"]
+  },
+  {
+    id: "sec2_titration_001",
+    topicId: "sec2_chemistry_ii",
+    type: "volumetric_analysis",
+    difficulty: "basic",
+    title: "Titration apparatus and endpoint",
+    prompt:
+      "In a titration, 25.0 cm3 of sodium hydroxide is placed in a conical flask and hydrochloric acid is added from a burette using an indicator.\n\n1. Why is a burette used for the acid?\n2. What is the endpoint?\n3. Why should the flask be swirled?",
+    expectedAnswer:
+      "A burette is used because it delivers variable volumes accurately and lets the titre be read. The endpoint is the indicator colour change showing enough acid has been added to neutralise the alkali. Swirling helps the solutions mix evenly.",
+    rubric: [
+      {
+        id: "burette_reason",
+        skill: "volumetric_analysis",
+        points: 1,
+        criterion: "Explains that a burette accurately delivers/measures variable volume."
+      },
+      {
+        id: "endpoint",
+        skill: "volumetric_analysis",
+        points: 1,
+        criterion: "Defines endpoint as the indicator colour change."
+      },
+      {
+        id: "swirl_mix",
+        skill: "experimental_chemistry",
+        points: 1,
+        criterion: "Explains that swirling mixes the solutions evenly."
+      }
+    ],
+    focusSkills: ["volumetric_analysis", "experimental_chemistry"]
+  },
+  {
+    id: "sec2_titre_calc_001",
+    topicId: "sec2_chemistry_ii",
+    type: "titration_calculation",
+    difficulty: "medium",
+    title: "Titration calculation",
+    prompt:
+      "25.0 cm3 of 0.100 mol/dm3 NaOH is neutralised by 20.0 cm3 of HCl.\n\nNaOH + HCl -> NaCl + H2O\n\nCalculate the concentration of HCl.",
+    expectedAnswer:
+      "Moles of NaOH = 0.100 x 25.0/1000 = 0.00250 mol. The ratio is 1:1, so moles of HCl = 0.00250 mol. Concentration of HCl = 0.00250 / 0.0200 = 0.125 mol/dm3.",
+    rubric: [
+      {
+        id: "moles_naoh",
+        skill: "titration_calculation",
+        points: 1,
+        criterion: "Calculates moles of NaOH as 0.00250 mol."
+      },
+      {
+        id: "mole_ratio",
+        skill: "titration_calculation",
+        points: 1,
+        criterion: "Uses the 1:1 mole ratio."
+      },
+      {
+        id: "hcl_concentration",
+        skill: "titration_calculation",
+        points: 1,
+        criterion: "Calculates HCl concentration as 0.125 mol/dm3."
+      }
+    ],
+    focusSkills: ["titration_calculation", "balancing"]
+  },
+  {
+    id: "sec2_qa_001",
+    topicId: "sec2_chemistry_ii",
+    type: "qualitative_analysis",
+    difficulty: "medium",
+    title: "Qualitative analysis inference",
+    prompt:
+      "A blue solution gives a blue precipitate when sodium hydroxide solution is added. The precipitate is insoluble in excess sodium hydroxide.\n\nWhat ion is likely present? What is the precipitate?",
+    expectedAnswer:
+      "Cu2+ is likely present. The blue precipitate is copper(II) hydroxide, Cu(OH)2.",
+    rubric: [
+      {
+        id: "cu2_ion",
+        skill: "qualitative_analysis",
+        points: 1,
+        criterion: "Infers Cu2+ is likely present."
+      },
+      {
+        id: "blue_precipitate",
+        skill: "observation_inference",
+        points: 1,
+        criterion: "Uses the blue precipitate observation as evidence."
+      },
+      {
+        id: "cuoh2",
+        skill: "formulae",
+        points: 1,
+        criterion: "Identifies the precipitate as Cu(OH)2."
+      }
+    ],
+    focusSkills: ["qualitative_analysis", "observation_inference", "formulae"]
+  },
+  {
     id: "ppt_concept_001",
-    topicId: "precipitation_reactions",
+    topicId: "sec2_chemistry_ii",
     type: "concept",
     difficulty: "diagnostic",
     title: "Define a precipitate",
@@ -278,7 +559,7 @@ export const questions = [
   },
   {
     id: "ppt_concept_bridge_001",
-    topicId: "precipitation_reactions",
+    topicId: "sec2_chemistry_ii",
     type: "bridge",
     difficulty: "basic",
     title: "Spot the precipitate",
@@ -310,7 +591,7 @@ export const questions = [
   },
   {
     id: "ppt_agcl_001",
-    topicId: "precipitation_reactions",
+    topicId: "sec2_chemistry_ii",
     type: "worked_practice",
     difficulty: "basic",
     title: "Silver chloride precipitate",
@@ -389,7 +670,7 @@ export const questions = [
   },
   {
     id: "ppt_solubility_001",
-    topicId: "precipitation_reactions",
+    topicId: "sec2_chemistry_ii",
     type: "prediction",
     difficulty: "basic",
     title: "Predict barium sulfate",
@@ -421,7 +702,7 @@ export const questions = [
   },
   {
     id: "ppt_formulae_001",
-    topicId: "precipitation_reactions",
+    topicId: "sec2_chemistry_ii",
     type: "formulae",
     difficulty: "basic",
     title: "Formula repair",
@@ -453,7 +734,7 @@ export const questions = [
   },
   {
     id: "ppt_balance_001",
-    topicId: "precipitation_reactions",
+    topicId: "sec2_chemistry_ii",
     type: "equation",
     difficulty: "basic",
     title: "Balance lead iodide",
@@ -484,7 +765,7 @@ export const questions = [
   },
   {
     id: "ppt_states_001",
-    topicId: "precipitation_reactions",
+    topicId: "sec2_chemistry_ii",
     type: "state_symbols",
     difficulty: "basic",
     title: "State symbols",
@@ -515,7 +796,7 @@ export const questions = [
   },
   {
     id: "ppt_spectators_001",
-    topicId: "precipitation_reactions",
+    topicId: "sec2_chemistry_ii",
     type: "spectator_ions",
     difficulty: "basic",
     title: "Find spectator ions",
@@ -547,7 +828,7 @@ export const questions = [
   },
   {
     id: "ppt_ionic_001",
-    topicId: "precipitation_reactions",
+    topicId: "sec2_chemistry_ii",
     type: "ionic_equation",
     difficulty: "basic",
     title: "Net ionic equation",
@@ -584,7 +865,7 @@ export const questions = [
   },
   {
     id: "ppt_observation_001",
-    topicId: "precipitation_reactions",
+    topicId: "sec2_chemistry_ii",
     type: "lab_reasoning",
     difficulty: "medium",
     title: "Observation to inference",
@@ -616,7 +897,7 @@ export const questions = [
   },
   {
     id: "ppt_mixed_001",
-    topicId: "precipitation_reactions",
+    topicId: "sec2_chemistry_ii",
     type: "mixed_review",
     difficulty: "medium",
     title: "Mixed review",
@@ -677,8 +958,13 @@ export function getQuestion(questionId) {
   return questions.find((question) => question.id === questionId) ?? null;
 }
 
+export function normalizeTopicId(topicId) {
+  return topicId === "precipitation_reactions" ? "sec2_chemistry_ii" : topicId;
+}
+
 export function firstQuestionForTopic(topicId) {
-  return questions.find((question) => question.topicId === topicId && question.difficulty === "diagnostic") ?? questions[0];
+  const normalizedTopicId = normalizeTopicId(topicId);
+  return questions.find((question) => question.topicId === normalizedTopicId && question.difficulty === "diagnostic") ?? questions[0];
 }
 
 const firstQuestionBySkill = {
@@ -688,6 +974,13 @@ const firstQuestionBySkill = {
   chemical_bonding: "sec1_bonding_001",
   acid_base_basics: "sec1_acid_base_001",
   sec1_gap_diagnosis: "sec1_diag_001",
+  acid_base_reactions: "sec2_acid_base_001",
+  salt_preparation: "sec2_salt_prep_001",
+  redox_concepts: "sec2_redox_001",
+  oxidation_states: "sec2_oxidation_states_001",
+  volumetric_analysis: "sec2_titration_001",
+  titration_calculation: "sec2_titre_calc_001",
+  qualitative_analysis: "sec2_qa_001",
   precipitate_concept: "ppt_concept_001",
   solubility_prediction: "ppt_solubility_001",
   formulae: "ppt_formulae_001",
@@ -699,20 +992,21 @@ const firstQuestionBySkill = {
   explanation_quality: "ppt_concept_bridge_001"
 };
 
-export function firstQuestionForSkill(skillId, topicId = "precipitation_reactions") {
+export function firstQuestionForSkill(skillId, topicId = "sec2_chemistry_ii") {
+  const normalizedTopicId = normalizeTopicId(topicId);
   const explicitQuestion = firstQuestionBySkill[skillId] ? getQuestion(firstQuestionBySkill[skillId]) : null;
-  if (explicitQuestion && explicitQuestion.topicId === topicId) {
+  if (explicitQuestion && explicitQuestion.topicId === normalizedTopicId) {
     return explicitQuestion;
   }
   return (
-    questions.find((question) => question.topicId === topicId && question.focusSkills.includes(skillId)) ??
-    firstQuestionForTopic(topicId)
+    questions.find((question) => question.topicId === normalizedTopicId && question.focusSkills.includes(skillId)) ??
+    firstQuestionForTopic(normalizedTopicId)
   );
 }
 
 export function nextQuestionForWeakSkills(weakSkills = [], answeredQuestionId = null, topicId = null) {
   const answeredQuestion = answeredQuestionId ? getQuestion(answeredQuestionId) : null;
-  const targetTopicId = topicId ?? answeredQuestion?.topicId ?? "precipitation_reactions";
+  const targetTopicId = normalizeTopicId(topicId ?? answeredQuestion?.topicId ?? "sec2_chemistry_ii");
   const topicQuestions = questions.filter((question) => question.topicId === targetTopicId);
   for (const skill of weakSkills) {
     const explicitNext = answeredQuestion?.nextByWeakSkill?.[skill];
@@ -734,12 +1028,19 @@ export function nextQuestionForWeakSkills(weakSkills = [], answeredQuestionId = 
       "sec1_acid_base_001",
       "sec1_observation_001"
     ],
-    precipitation_reactions: [
+    sec2_chemistry_ii: [
+      "sec2_acid_base_001",
+      "sec2_redox_001",
+      "sec2_titration_001",
+      "sec2_qa_001",
       "ppt_agcl_001",
       "ppt_solubility_001",
       "ppt_spectators_001",
       "ppt_ionic_001",
-      "ppt_mixed_001"
+      "ppt_mixed_001",
+      "sec2_salt_prep_001",
+      "sec2_oxidation_states_001",
+      "sec2_titre_calc_001"
     ]
   };
   const ordered = orderedByTopic[targetTopicId] ?? topicQuestions.map((question) => question.id);

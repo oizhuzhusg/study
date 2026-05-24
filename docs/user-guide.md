@@ -10,7 +10,7 @@
    `Student` 用于真实学生进度，`Tester` 用于家长测试。两个 profile 的掌握度和练习记录互不覆盖。
 
 2. 在左侧 `Knowledge Points` 选择学习范围。
-   可以选择 `Sec 1 Chemistry Foundations`、`Precipitation Reactions`，也可以点某一个具体知识点做针对训练。
+   可以选择 `Sec 1 Chemistry Foundations`、`Sec 2 Chemistry II`，也可以点某一个具体知识点做针对训练。`Precipitation Reactions` 已经放在 Sec 2 Chemistry II 里面。
 
 3. 先看中间的讲解区。
    `Concept` 是核心概念，`Example` 是例子，`Problem-Solving Steps` 是解题步骤，`Reminder` 是容易忘记的关键点。
@@ -54,6 +54,7 @@
 
 当前 Sec 2 Chemistry II 知识点包括：
 
+- Reaction type diagnosis
 - What a precipitate is
 - Predicting whether a precipitate forms
 - Writing chemical formulae
@@ -63,5 +64,12 @@
 - Writing net ionic equations
 - Using observations to infer ions
 - Writing complete explanations
+- Acid-base reactions
+- Salt preparation
+- Redox concepts
+- Oxidation states
+- Volumetric analysis / titration
+- Titration calculations
+- Qualitative analysis
 
 后续可以继续扩展到更多 Chemistry topics，并为 Chinese 课程单独使用中文界面和中文内容。

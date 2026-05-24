@@ -25,6 +25,41 @@ export const skills = [
     description: "Understands acids, alkalis, indicators, pH, and neutralisation."
   },
   {
+    id: "acid_base_reactions",
+    label: "Acid-base reactions",
+    description: "Writes and explains acid reactions, neutralisation, and salt formation."
+  },
+  {
+    id: "salt_preparation",
+    label: "Salt preparation",
+    description: "Chooses suitable methods and steps to prepare salts safely and cleanly."
+  },
+  {
+    id: "redox_concepts",
+    label: "Redox concepts",
+    description: "Recognises oxidation, reduction, oxidising agents, and reducing agents."
+  },
+  {
+    id: "oxidation_states",
+    label: "Oxidation states",
+    description: "Uses oxidation state changes to identify redox processes."
+  },
+  {
+    id: "volumetric_analysis",
+    label: "Volumetric analysis",
+    description: "Uses titration apparatus, endpoints, titres, and practical accuracy."
+  },
+  {
+    id: "titration_calculation",
+    label: "Titration calculation",
+    description: "Calculates concentration or amount from titre and balanced equation data."
+  },
+  {
+    id: "qualitative_analysis",
+    label: "Qualitative analysis",
+    description: "Uses chemical tests and observations to infer ions or gases present."
+  },
+  {
     id: "precipitate_concept",
     label: "Precipitate concept",
     description: "Understands that a precipitate is an insoluble solid formed from solutions."
@@ -106,19 +141,50 @@ export const topics = [
     ]
   },
   {
-    id: "precipitation_reactions",
-    title: "Precipitation Reactions",
+    id: "sec2_chemistry_ii",
+    title: "Sec 2 Chemistry II",
     course: "NUSH CM2131 Foundations in Chemistry II",
     status: "active",
-    estimatedMinutes: 20,
+    estimatedMinutes: 40,
     summary:
-      "Learn how aqueous ionic solutions form insoluble solids, then write observations, molecular equations, and net ionic equations.",
+      "Build the main Sec 2 Chemistry II topics: precipitation, acid-base and salts, redox, volumetric analysis, and qualitative analysis.",
     objectives: [
-      "Define precipitate as an insoluble solid formed from solution.",
-      "Predict common precipitates using simple solubility rules.",
-      "Write balanced molecular equations with state symbols.",
-      "Remove spectator ions to form net ionic equations.",
-      "Use observations to infer ions in qualitative analysis."
+      "Diagnose whether a reaction is precipitation, acid-base, or redox.",
+      "Write balanced molecular and net ionic equations where appropriate.",
+      "Use observations and tests to infer ions or gases.",
+      "Apply titration apparatus, endpoint, and titre reasoning.",
+      "Explain redox using electron transfer or oxidation state changes."
+    ],
+    sections: [
+      {
+        title: "Precipitation Reactions",
+        skillIds: [
+          "precipitate_concept",
+          "solubility_prediction",
+          "formulae",
+          "balancing",
+          "state_symbols",
+          "spectator_ions",
+          "ionic_equation",
+          "observation_inference"
+        ]
+      },
+      {
+        title: "Acid-base and Salts",
+        skillIds: ["acid_base_reactions", "salt_preparation", "formulae", "balancing", "state_symbols"]
+      },
+      {
+        title: "Redox",
+        skillIds: ["redox_concepts", "oxidation_states", "balancing", "explanation_quality"]
+      },
+      {
+        title: "Volumetric Analysis",
+        skillIds: ["volumetric_analysis", "titration_calculation", "experimental_chemistry"]
+      },
+      {
+        title: "Qualitative Analysis",
+        skillIds: ["qualitative_analysis", "observation_inference", "explanation_quality"]
+      }
     ],
     skillIds: [
       "precipitate_concept",
@@ -129,6 +195,14 @@ export const topics = [
       "spectator_ions",
       "ionic_equation",
       "observation_inference",
+      "acid_base_reactions",
+      "salt_preparation",
+      "redox_concepts",
+      "oxidation_states",
+      "volumetric_analysis",
+      "titration_calculation",
+      "qualitative_analysis",
+      "experimental_chemistry",
       "explanation_quality"
     ]
   }
@@ -150,20 +224,20 @@ export const lessons = {
     keyReminder:
       "A weak Sec 1 foundation often appears as a Sec 2 reaction mistake. Repair the foundation first, then practise the reaction."
   },
-  precipitation_reactions: {
+  sec2_chemistry_ii: {
     short:
-      "A precipitation reaction happens when two aqueous ionic solutions are mixed and one product is insoluble. The insoluble solid is the precipitate.",
+      "Sec 2 Chemistry II connects reaction types to evidence: precipitates show insoluble products, acid-base reactions form salts, redox changes electron ownership, and practical analysis uses careful measurement and observation.",
     example:
-      "When AgNO3(aq) and NaCl(aq) are mixed, Ag+ and Cl- form AgCl(s), a white precipitate. Na+ and NO3- stay dissolved, so they are spectator ions.",
+      "When AgNO3(aq) and NaCl(aq) are mixed, AgCl(s) forms as a white precipitate. In a titration, hydrochloric acid and sodium hydroxide neutralise to form sodium chloride and water. In redox, zinc displaces copper because zinc is oxidised more readily.",
     steps: [
-      "Swap ions to predict possible products.",
-      "Use solubility rules to decide if a product is insoluble.",
-      "Write the full balanced equation with state symbols.",
-      "Split aqueous ionic compounds into ions.",
-      "Cancel spectator ions to get the net ionic equation."
+      "Identify the reaction type: precipitation, acid-base, redox, volumetric analysis, or qualitative analysis.",
+      "Write correct formulae and a balanced equation before interpreting the chemistry.",
+      "Add state symbols and observations when the question is practical.",
+      "For precipitation, remove spectator ions to get the net ionic equation.",
+      "For acid-base, redox, titration, or qualitative analysis, explain the evidence and the chemical reasoning."
     ],
     keyReminder:
-      "A net ionic equation shows only the particles that actually change. Spectator ions are removed."
+      "Precipitation is now one part of Sec 2 Chemistry II. If the student struggles, check whether the gap is in formulae, equations, observations, or the specific reaction type."
   }
 };
 

@@ -56,6 +56,54 @@ function ruleMatches(ruleId, text) {
       return includesAny(text, ["hydrogen", "h2"]);
     case "hydrogen_test":
       return includesAny(text, ["lighted splint", "burning splint", "squeaky pop", "pop sound"]);
+    case "classify_precipitation":
+      return includesAny(text, ["precipitation", "precipitate", "insoluble solid", "white solid"]);
+    case "classify_titration":
+      return includesAny(text, ["titration", "volumetric", "burette", "titre", "endpoint"]);
+    case "classify_redox":
+      return includesAny(text, ["redox", "displacement", "oxidised", "oxidized", "reduced"]);
+    case "observation_evidence":
+      return includesAny(text, ["white solid", "brown solid", "blue", "colour", "color", "indicator", "endpoint", "precipitate"]);
+    case "potassium_sulfate":
+      return includesAny(text, ["potassium sulfate", "potassium sulphate", "k2so4"]);
+    case "balanced_acid_base":
+      return includesAny(text, ["h2so4"]) && includesAny(text, ["2koh", "2 koh"]) && includesAny(text, ["k2so4"]) && includesAny(text, ["2h2o", "2 h2o"]);
+    case "salt_prep_order":
+      return includesAny(text, ["warm", "heat"]) && includesAny(text, ["filter"]) && includesAny(text, ["evaporate", "crystallise", "crystallize"]);
+    case "excess_solid":
+      return includesAny(text, ["excess"]) && includesAny(text, ["acid", "reacted", "neutralised", "neutralized"]);
+    case "filter_crystallise":
+      return includesAny(text, ["filter"]) && includesAny(text, ["crystal", "evaporate"]);
+    case "copper_solid":
+      return includesAny(text, ["copper", "cu"]) && includesAny(text, ["brown", "solid", "metal"]);
+    case "zinc_oxidised":
+      return includesAny(text, ["zinc", "zn"]) && includesAny(text, ["oxidised", "oxidized", "loses electron", "zn2+"]);
+    case "copper_reduced":
+      return includesAny(text, ["copper", "cu2+", "cu"]) && includesAny(text, ["reduced", "gains electron"]);
+    case "iron_reduced":
+      return includesAny(text, ["iron", "fe"]) && includesAny(text, ["+3", "3+", "0", "reduced"]);
+    case "carbon_oxidised":
+      return includesAny(text, ["carbon", "co"]) && includesAny(text, ["+2", "+4", "oxidised", "oxidized"]);
+    case "redox_terms":
+      return includesAny(text, ["oxidised", "oxidized", "oxidation"]) && includesAny(text, ["reduced", "reduction"]);
+    case "burette_reason":
+      return includesAny(text, ["burette"]) && includesAny(text, ["accurate", "variable", "volume", "titre"]);
+    case "endpoint":
+      return includesAny(text, ["endpoint", "end point", "colour change", "color change"]);
+    case "swirl_mix":
+      return includesAny(text, ["swirl", "mix", "evenly"]);
+    case "moles_naoh":
+      return includesAny(text, ["0.0025", "2.5 x 10", "2.50"]);
+    case "mole_ratio":
+      return includesAny(text, ["1:1", "one to one", "same moles", "ratio"]);
+    case "hcl_concentration":
+      return includesAny(text, ["0.125"]);
+    case "cu2_ion":
+      return hasIon(text, ["Cu2+", "Cu^2+"]) || includesAny(text, ["copper(ii)", "copper 2"]);
+    case "blue_precipitate":
+      return includesAny(text, ["blue precipitate", "blue ppt", "blue solid"]);
+    case "cuoh2":
+      return includesAny(text, ["cu(oh)2", "copper(ii) hydroxide", "copper hydroxide"]);
     case "solid":
       return includesAny(text, ["solid", "ppt", "precipitate"]);
     case "insoluble":

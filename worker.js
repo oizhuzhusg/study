@@ -1,5 +1,5 @@
 import { defaultMastery, lessons, skills, topics } from "./src/shared/topics.js";
-import { firstQuestionForSkill, firstQuestionForTopic, getQuestion, nextQuestionForWeakSkills, questions } from "./src/shared/questions.js";
+import { firstQuestionForSkill, firstQuestionForTopic, getQuestion, nextQuestionForWeakSkills, normalizeTopicId, questions } from "./src/shared/questions.js";
 import { applyMasteryUpdates, gradeAnswerFallback } from "./src/worker/grading.js";
 import { gradeAnswerWithOpenAI, transcribeAnswerPhoto } from "./src/worker/openai.js";
 import { APP_VERSION } from "./public/version.js";
@@ -105,7 +105,7 @@ async function routeApi(request, env, ctx) {
 
   if (url.pathname === "/api/session/start" && request.method === "POST") {
     const body = await readJson(request);
-    const topicId = body.topicId || "sec1_foundations";
+    const topicId = normalizeTopicId(body.topicId || "sec1_foundations");
     const topic = topics.find((item) => item.id === topicId);
     if (!topic) {
       return json({ error: `Unknown topic: ${topicId}` }, 400);
@@ -123,7 +123,7 @@ async function routeApi(request, env, ctx) {
 
   if (url.pathname === "/api/tutor/explain" && request.method === "POST") {
     const body = await readJson(request);
-    const topicId = body.topicId || "sec1_foundations";
+    const topicId = normalizeTopicId(body.topicId || "sec1_foundations");
     const lesson = lessons[topicId];
     if (!lesson) {
       return json({ error: `Unknown lesson: ${topicId}` }, 400);

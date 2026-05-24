@@ -1,4 +1,4 @@
-import { APP_VERSION } from "/version.js?v=2026.05.24.4";
+import { APP_VERSION } from "/version.js?v=2026.05.24.5";
 
 const state = {
   profile: null,
@@ -81,6 +81,10 @@ async function api(path, options = {}) {
 
 function normalizeVersion(version) {
   return String(version ?? "").trim();
+}
+
+function normalizeTopicId(topicId) {
+  return topicId === "precipitation_reactions" ? "sec2_chemistry_ii" : topicId;
 }
 
 function renderUpdateBanner(version) {
@@ -359,8 +363,7 @@ function renderTopicMap() {
       `;
     })
     .join("");
-  const skillButtons = state.topic.skillIds
-    .map((skillId) => {
+  const renderSkillButton = (skillId) => {
       const skill = skillLookup.get(skillId);
       if (!skill) {
         return "";
@@ -378,8 +381,21 @@ function renderTopicMap() {
           <span class="topic-score">${score}%</span>
         </button>
       `;
-    })
-    .join("");
+    };
+  const skillSections = Array.isArray(state.topic.sections)
+    ? state.topic.sections
+        .map((section) => {
+          const buttons = section.skillIds.map(renderSkillButton).join("");
+          if (!buttons) {
+            return "";
+          }
+          return `
+            <div class="topic-subtitle section-subtitle">${escapeHtml(section.title)}</div>
+            ${buttons}
+          `;
+        })
+        .join("")
+    : state.topic.skillIds.map(renderSkillButton).join("");
 
   els.topicList.innerHTML = `
     <div class="topic-subtitle">Modules</div>
@@ -393,7 +409,7 @@ function renderTopicMap() {
       </span>
       <span class="topic-score">${average}%</span>
     </button>
-    ${skillButtons}
+    ${skillSections}
   `;
 
   for (const button of els.topicList.querySelectorAll("[data-topic-id]")) {
@@ -547,7 +563,7 @@ async function startSession(options = {}) {
       ? options.topicId
       : state.topic?.id ?? local.selectedTopicId ?? "sec1_foundations";
   const selectedSkillId = typeof options === "object" && "selectedSkillId" in options ? options.selectedSkillId : state.selectedSkillId;
-  const effectiveTopicId = selectedTopicId || "sec1_foundations";
+  const effectiveTopicId = normalizeTopicId(selectedTopicId || "sec1_foundations");
   const effectiveSkillId = reset ? null : selectedSkillId;
   const payload = await api("/api/session/start", {
     method: "POST",
@@ -598,7 +614,7 @@ async function selectProfile(profileId) {
   migrateLegacyState(profile.id);
   els.profileGate.classList.add("hidden");
   const local = loadLocalState();
-  await startSession({ topicId: local.selectedTopicId ?? "sec1_foundations", selectedSkillId: local.selectedSkillId ?? null, reset: false });
+  await startSession({ topicId: normalizeTopicId(local.selectedTopicId ?? "sec1_foundations"), selectedSkillId: local.selectedSkillId ?? null, reset: false });
 }
 
 async function addProfile(name) {
@@ -721,6 +737,22 @@ function fillSampleAnswer() {
       "This is neutralisation. Hydrochloric acid + sodium hydroxide -> sodium chloride + water.",
     sec1_observation_001:
       "Bubbles forming and magnesium disappearing are observations. The gas is hydrogen. A lighted splint gives a squeaky pop.",
+    sec2_diag_001:
+      "1. Precipitation because an insoluble white solid forms. 2. Titration / neutralisation because acid reacts with alkali and the indicator shows the endpoint. 3. Redox displacement because zinc is oxidised and Cu2+ is reduced to copper.",
+    sec2_acid_base_001:
+      "This is neutralisation. Sulfuric acid + potassium hydroxide -> potassium sulfate + water. H2SO4 + 2KOH -> K2SO4 + 2H2O.",
+    sec2_salt_prep_001:
+      "Warm the acid, add excess copper(II) oxide until no more reacts, filter off excess solid, evaporate the filtrate, crystallise, then dry the crystals. Excess solid ensures all acid has reacted.",
+    sec2_redox_001:
+      "The brown solid is copper. Zinc is oxidised to Zn2+ and Cu2+ is reduced to copper metal, so this is redox.",
+    sec2_oxidation_states_001:
+      "Iron is reduced from +3 in Fe2O3 to 0 in Fe. Carbon is oxidised from +2 in CO to +4 in CO2.",
+    sec2_titration_001:
+      "A burette is used because it accurately delivers variable volumes and lets the titre be read. The endpoint is the indicator colour change. Swirling mixes the solutions evenly.",
+    sec2_titre_calc_001:
+      "Moles NaOH = 0.100 x 25.0/1000 = 0.00250 mol. The ratio is 1:1, so moles HCl = 0.00250 mol. Concentration HCl = 0.00250/0.0200 = 0.125 mol/dm3.",
+    sec2_qa_001:
+      "Cu2+ is likely present. The blue precipitate is copper(II) hydroxide, Cu(OH)2.",
     ppt_concept_001: "A precipitate is an insoluble solid formed when ions in aqueous solutions react.",
     ppt_concept_bridge_001:
       "The cloudy white solid is the precipitate. It shows an insoluble product formed.",
@@ -744,6 +776,8 @@ function explainAgain() {
   const message =
     state.topic?.id === "sec1_foundations"
       ? "For Sec 1 foundations, first name the rule: particles explain matter, charges explain formulae, and observations support inferences."
+      : state.topic?.id === "sec2_chemistry_ii"
+        ? "For Sec 2 Chemistry II, first classify the chemistry: precipitation, acid-base, redox, volumetric analysis, or qualitative analysis. Then use the evidence."
       : "Think of precipitation as ions meeting in water and forming a solid that can no longer stay dissolved.";
   addLog(
     "Explained differently",
