@@ -105,7 +105,7 @@ async function routeApi(request, env, ctx) {
 
   if (url.pathname === "/api/session/start" && request.method === "POST") {
     const body = await readJson(request);
-    const topicId = body.topicId || "precipitation_reactions";
+    const topicId = body.topicId || "sec1_foundations";
     const topic = topics.find((item) => item.id === topicId);
     if (!topic) {
       return json({ error: `Unknown topic: ${topicId}` }, 400);
@@ -123,7 +123,7 @@ async function routeApi(request, env, ctx) {
 
   if (url.pathname === "/api/tutor/explain" && request.method === "POST") {
     const body = await readJson(request);
-    const topicId = body.topicId || "precipitation_reactions";
+    const topicId = body.topicId || "sec1_foundations";
     const lesson = lessons[topicId];
     if (!lesson) {
       return json({ error: `Unknown lesson: ${topicId}` }, 400);
@@ -139,7 +139,7 @@ async function routeApi(request, env, ctx) {
 
   if (url.pathname === "/api/question/next" && request.method === "POST") {
     const body = await readJson(request);
-    const next = nextQuestionForWeakSkills(body.weakSkills ?? [], body.answeredQuestionId ?? null);
+    const next = nextQuestionForWeakSkills(body.weakSkills ?? [], body.answeredQuestionId ?? null, body.topicId ?? null);
     return json({ question: publicQuestion(next) });
   }
 

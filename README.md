@@ -2,7 +2,7 @@
 
 AI Chemistry tutor for NUSH `CM2131 Foundations in Chemistry II`.
 
-The first MVP is a complete vertical slice for **Precipitation Reactions**:
+The first MVP is a complete vertical slice for **Sec 1 Chemistry Foundations** and **Precipitation Reactions**:
 
 - concept explanation
 - diagnostic and practice questions

@@ -1,5 +1,247 @@
 export const questions = [
   {
+    id: "sec1_diag_001",
+    topicId: "sec1_foundations",
+    type: "diagnostic",
+    difficulty: "diagnostic",
+    title: "Sec 1 foundation check",
+    prompt:
+      "Answer briefly.\n\n1. Why does a smell spread across a room faster when the room is warm?\n2. What is the formula of the compound made from Mg2+ and Cl- ions?\n3. Hydrochloric acid reacts with sodium hydroxide. What type of reaction is this, and what are the products?",
+    expectedAnswer:
+      "Warm particles have more kinetic energy and move faster, so diffusion is faster. Mg2+ and Cl- form MgCl2 because two chloride ions are needed to balance one magnesium ion. Hydrochloric acid and sodium hydroxide undergo neutralisation to form sodium chloride and water.",
+    rubric: [
+      {
+        id: "particle_motion",
+        skill: "kinetic_theory",
+        points: 1,
+        criterion: "Explains that particles move randomly and faster at higher temperature."
+      },
+      {
+        id: "mgcl2",
+        skill: "ions_charges",
+        points: 1,
+        criterion: "Writes MgCl2, not MgCl or Mg2Cl."
+      },
+      {
+        id: "ionic_charge_balance",
+        skill: "formulae",
+        points: 1,
+        criterion: "Explains the formula by balancing Mg2+ with two Cl- ions."
+      },
+      {
+        id: "neutralisation",
+        skill: "acid_base_basics",
+        points: 1,
+        criterion: "Identifies the acid-alkali reaction as neutralisation."
+      },
+      {
+        id: "salt_water",
+        skill: "acid_base_basics",
+        points: 1,
+        criterion: "States that salt and water are formed."
+      }
+    ],
+    focusSkills: ["kinetic_theory", "ions_charges", "formulae", "acid_base_basics", "sec1_gap_diagnosis"],
+    nextByWeakSkill: {
+      kinetic_theory: "sec1_particles_001",
+      ions_charges: "sec1_bonding_001",
+      formulae: "sec1_bonding_001",
+      acid_base_basics: "sec1_acid_base_001",
+      sec1_gap_diagnosis: "sec1_lab_001"
+    }
+  },
+  {
+    id: "sec1_lab_001",
+    topicId: "sec1_foundations",
+    type: "practical_skills",
+    difficulty: "basic",
+    title: "Choose apparatus",
+    prompt:
+      "A student needs to measure exactly 25.0 cm3 of sodium hydroxide solution for a titration practice.\n\nWhich apparatus is most suitable: beaker, measuring cylinder, or pipette? Explain why.",
+    expectedAnswer:
+      "A pipette is most suitable because it measures a fixed volume accurately. A beaker is not accurate, and a measuring cylinder is less accurate than a pipette.",
+    rubric: [
+      {
+        id: "apparatus_pipette",
+        skill: "experimental_chemistry",
+        points: 1,
+        criterion: "Chooses a pipette."
+      },
+      {
+        id: "accuracy_reason",
+        skill: "experimental_chemistry",
+        points: 1,
+        criterion: "Explains that a pipette measures a fixed volume more accurately."
+      },
+      {
+        id: "clear_comparison",
+        skill: "explanation_quality",
+        points: 1,
+        criterion: "Compares it clearly with less accurate apparatus."
+      }
+    ],
+    focusSkills: ["experimental_chemistry", "explanation_quality"]
+  },
+  {
+    id: "sec1_particles_001",
+    topicId: "sec1_foundations",
+    type: "particle_model",
+    difficulty: "basic",
+    title: "Diffusion and temperature",
+    prompt:
+      "Use kinetic theory to explain why food smells spread faster in a warm room than in a cold room.",
+    expectedAnswer:
+      "Gas particles move randomly. In a warm room, the particles have more kinetic energy and move faster, so they diffuse through the air faster.",
+    rubric: [
+      {
+        id: "particle_motion",
+        skill: "kinetic_theory",
+        points: 1,
+        criterion: "States that particles move randomly."
+      },
+      {
+        id: "temperature_effect",
+        skill: "kinetic_theory",
+        points: 1,
+        criterion: "Explains that higher temperature gives particles more kinetic energy or faster movement."
+      },
+      {
+        id: "diffusion",
+        skill: "kinetic_theory",
+        points: 1,
+        criterion: "Connects faster particle movement to faster diffusion."
+      }
+    ],
+    focusSkills: ["kinetic_theory", "explanation_quality"]
+  },
+  {
+    id: "sec1_bonding_001",
+    topicId: "sec1_foundations",
+    type: "bonding_formulae",
+    difficulty: "basic",
+    title: "Ionic formula from charges",
+    prompt:
+      "Magnesium forms Mg2+ ions and chloride forms Cl- ions.\n\n1. Write the formula of magnesium chloride.\n2. Explain the ratio using charges.\n3. State whether this is mainly ionic or covalent bonding.",
+    expectedAnswer:
+      "The formula is MgCl2. One Mg2+ ion needs two Cl- ions so the total charge is zero. This is ionic bonding.",
+    rubric: [
+      {
+        id: "mgcl2",
+        skill: "formulae",
+        points: 1,
+        criterion: "Writes MgCl2."
+      },
+      {
+        id: "ionic_charge_balance",
+        skill: "ions_charges",
+        points: 1,
+        criterion: "Explains that two Cl- ions balance one Mg2+ ion."
+      },
+      {
+        id: "ionic_bond",
+        skill: "chemical_bonding",
+        points: 1,
+        criterion: "Identifies the bonding as ionic."
+      }
+    ],
+    focusSkills: ["formulae", "ions_charges", "chemical_bonding"]
+  },
+  {
+    id: "sec1_equations_001",
+    topicId: "sec1_foundations",
+    type: "equations",
+    difficulty: "basic",
+    title: "Balance magnesium oxide",
+    prompt:
+      "Magnesium burns in oxygen to form magnesium oxide.\n\nWrite the balanced symbol equation.",
+    expectedAnswer: "2Mg + O2 -> 2MgO",
+    rubric: [
+      {
+        id: "formula_mgo",
+        skill: "formulae",
+        points: 1,
+        criterion: "Uses MgO as the formula of magnesium oxide."
+      },
+      {
+        id: "balanced_mgo",
+        skill: "balancing",
+        points: 1,
+        criterion: "Balances the equation as 2Mg + O2 -> 2MgO."
+      },
+      {
+        id: "formula_unchanged",
+        skill: "balancing",
+        points: 1,
+        criterion: "Balances using coefficients without changing formulae."
+      }
+    ],
+    focusSkills: ["formulae", "balancing"]
+  },
+  {
+    id: "sec1_acid_base_001",
+    topicId: "sec1_foundations",
+    type: "acid_base",
+    difficulty: "basic",
+    title: "Neutralisation basics",
+    prompt:
+      "Hydrochloric acid reacts with sodium hydroxide.\n\n1. What type of reaction is this?\n2. Name the products.\n3. Write a word equation.",
+    expectedAnswer:
+      "This is neutralisation. The products are sodium chloride and water. Hydrochloric acid + sodium hydroxide -> sodium chloride + water.",
+    rubric: [
+      {
+        id: "neutralisation",
+        skill: "acid_base_basics",
+        points: 1,
+        criterion: "Identifies the reaction as neutralisation."
+      },
+      {
+        id: "acid_alkali",
+        skill: "acid_base_basics",
+        points: 1,
+        criterion: "Recognises hydrochloric acid as the acid and sodium hydroxide as the alkali/base."
+      },
+      {
+        id: "salt_water",
+        skill: "acid_base_basics",
+        points: 1,
+        criterion: "Names sodium chloride and water as products."
+      }
+    ],
+    focusSkills: ["acid_base_basics", "explanation_quality"]
+  },
+  {
+    id: "sec1_observation_001",
+    topicId: "sec1_foundations",
+    type: "lab_reasoning",
+    difficulty: "basic",
+    title: "Observation or inference",
+    prompt:
+      "Magnesium ribbon is added to dilute hydrochloric acid. The student sees bubbles and the magnesium slowly disappears.\n\n1. Which part is an observation?\n2. What gas is likely produced?\n3. How can the gas be tested?",
+    expectedAnswer:
+      "Bubbles forming and magnesium disappearing are observations. The gas is likely hydrogen. Test it with a lighted splint; hydrogen gives a squeaky pop.",
+    rubric: [
+      {
+        id: "bubbles_observation",
+        skill: "observation_inference",
+        points: 1,
+        criterion: "Identifies bubbles or magnesium disappearing as observations."
+      },
+      {
+        id: "hydrogen",
+        skill: "acid_base_basics",
+        points: 1,
+        criterion: "Identifies hydrogen gas."
+      },
+      {
+        id: "hydrogen_test",
+        skill: "experimental_chemistry",
+        points: 1,
+        criterion: "States the lighted splint squeaky pop test."
+      }
+    ],
+    focusSkills: ["observation_inference", "acid_base_basics", "experimental_chemistry"]
+  },
+  {
     id: "ppt_concept_001",
     topicId: "precipitation_reactions",
     type: "concept",
@@ -440,6 +682,12 @@ export function firstQuestionForTopic(topicId) {
 }
 
 const firstQuestionBySkill = {
+  experimental_chemistry: "sec1_lab_001",
+  kinetic_theory: "sec1_particles_001",
+  ions_charges: "sec1_bonding_001",
+  chemical_bonding: "sec1_bonding_001",
+  acid_base_basics: "sec1_acid_base_001",
+  sec1_gap_diagnosis: "sec1_diag_001",
   precipitate_concept: "ppt_concept_001",
   solubility_prediction: "ppt_solubility_001",
   formulae: "ppt_formulae_001",
@@ -462,26 +710,39 @@ export function firstQuestionForSkill(skillId, topicId = "precipitation_reaction
   );
 }
 
-export function nextQuestionForWeakSkills(weakSkills = [], answeredQuestionId = null) {
+export function nextQuestionForWeakSkills(weakSkills = [], answeredQuestionId = null, topicId = null) {
   const answeredQuestion = answeredQuestionId ? getQuestion(answeredQuestionId) : null;
+  const targetTopicId = topicId ?? answeredQuestion?.topicId ?? "precipitation_reactions";
+  const topicQuestions = questions.filter((question) => question.topicId === targetTopicId);
   for (const skill of weakSkills) {
     const explicitNext = answeredQuestion?.nextByWeakSkill?.[skill];
-    if (explicitNext) {
+    if (explicitNext && getQuestion(explicitNext)?.topicId === targetTopicId) {
       return getQuestion(explicitNext);
     }
-    const focused = questions.find((question) => question.id !== answeredQuestionId && question.focusSkills.includes(skill));
+    const focused = topicQuestions.find((question) => question.id !== answeredQuestionId && question.focusSkills.includes(skill));
     if (focused) {
       return focused;
     }
   }
 
-  const ordered = [
-    "ppt_agcl_001",
-    "ppt_solubility_001",
-    "ppt_spectators_001",
-    "ppt_ionic_001",
-    "ppt_mixed_001"
-  ];
-  const nextId = ordered.find((id) => id !== answeredQuestionId) ?? "ppt_mixed_001";
-  return getQuestion(nextId);
+  const orderedByTopic = {
+    sec1_foundations: [
+      "sec1_lab_001",
+      "sec1_particles_001",
+      "sec1_bonding_001",
+      "sec1_equations_001",
+      "sec1_acid_base_001",
+      "sec1_observation_001"
+    ],
+    precipitation_reactions: [
+      "ppt_agcl_001",
+      "ppt_solubility_001",
+      "ppt_spectators_001",
+      "ppt_ionic_001",
+      "ppt_mixed_001"
+    ]
+  };
+  const ordered = orderedByTopic[targetTopicId] ?? topicQuestions.map((question) => question.id);
+  const nextId = ordered.find((id) => id !== answeredQuestionId) ?? firstQuestionForTopic(targetTopicId).id;
+  return getQuestion(nextId) ?? firstQuestionForTopic(targetTopicId);
 }

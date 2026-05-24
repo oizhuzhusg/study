@@ -22,6 +22,40 @@ function hasIon(text, variants) {
 
 function ruleMatches(ruleId, text) {
   switch (ruleId) {
+    case "apparatus_pipette":
+      return includesAny(text, ["pipette"]);
+    case "accuracy_reason":
+      return includesAny(text, ["accurate", "accuracy", "fixed volume", "25.0"]);
+    case "clear_comparison":
+      return includesAny(text, ["beaker", "measuring cylinder", "less accurate", "more accurate"]);
+    case "particle_motion":
+      return includesAny(text, ["particle", "particles"]) && includesAny(text, ["move", "random", "kinetic"]);
+    case "temperature_effect":
+      return includesAny(text, ["warm", "temperature", "heat", "higher"]) && includesAny(text, ["faster", "kinetic energy", "more energy"]);
+    case "diffusion":
+      return includesAny(text, ["diffusion", "diffuse", "spread"]);
+    case "mgcl2":
+      return includesAny(text, ["mgcl2", "magnesium chloride"]);
+    case "ionic_charge_balance":
+      return includesAny(text, ["charge", "2+", "two", "balance", "neutral", "zero"]) && includesAny(text, ["cl", "chloride"]);
+    case "ionic_bond":
+      return includesAny(text, ["ionic"]);
+    case "formula_mgo":
+      return includesAny(text, ["mgo", "magnesium oxide"]);
+    case "balanced_mgo":
+      return includesAny(text, ["2mg"]) && includesAny(text, ["o2"]) && includesAny(text, ["2mgo"]);
+    case "neutralisation":
+      return includesAny(text, ["neutralisation", "neutralization", "neutralise", "neutralize"]);
+    case "acid_alkali":
+      return includesAny(text, ["acid"]) && includesAny(text, ["alkali", "base", "hydroxide"]);
+    case "salt_water":
+      return includesAny(text, ["salt", "sodium chloride", "nacl"]) && includesAny(text, ["water", "h2o"]);
+    case "bubbles_observation":
+      return includesAny(text, ["bubble", "effervescence", "fizz", "magnesium disappears", "mg disappears"]);
+    case "hydrogen":
+      return includesAny(text, ["hydrogen", "h2"]);
+    case "hydrogen_test":
+      return includesAny(text, ["lighted splint", "burning splint", "squeaky pop", "pop sound"]);
     case "solid":
       return includesAny(text, ["solid", "ppt", "precipitate"]);
     case "insoluble":

@@ -2,7 +2,7 @@
 
 ## 适合谁使用
 
-这个网页目前先服务 NUSH 初中 2 年级 Chemistry，第一阶段聚焦 `Precipitation Reactions`。它的目标不是单纯刷题，而是按“讲概念 -> 举例 -> 做题 -> 根据答案判断掌握情况 -> 继续加强”的方式学习。
+这个网页目前先服务 NUSH 初中 2 年级 Chemistry，同时补上 Sec 1 Chemistry foundations。这样做是因为很多 Sec 2 错误表面上发生在 `Precipitation Reactions`，底层却可能是 Sec 1 的 formulae、bonding、equations、particle theory 或实验观察没有完全学稳。它的目标不是单纯刷题，而是按“讲概念 -> 举例 -> 做题 -> 根据答案判断掌握情况 -> 继续加强”的方式学习。
 
 ## 日常使用流程
 
@@ -10,7 +10,7 @@
    `Student` 用于真实学生进度，`Tester` 用于家长测试。两个 profile 的掌握度和练习记录互不覆盖。
 
 2. 在左侧 `Knowledge Points` 选择学习范围。
-   可以选择整个 `Precipitation Reactions`，也可以点某一个具体知识点做针对训练。
+   可以选择 `Sec 1 Chemistry Foundations`、`Precipitation Reactions`，也可以点某一个具体知识点做针对训练。
 
 3. 先看中间的讲解区。
    `Concept` 是核心概念，`Example` 是例子，`Problem-Solving Steps` 是解题步骤，`Reminder` 是容易忘记的关键点。
@@ -40,7 +40,19 @@
 
 ## 当前范围
 
-当前 Chemistry 知识点包括：
+当前 Sec 1 foundation 知识点包括：
+
+- Experimental chemistry
+- Kinetic theory
+- Ions and charges
+- Chemical bonding
+- Formulae
+- Balancing equations
+- Acid-base basics
+- Observation and inference
+- Sec 1 gap diagnosis
+
+当前 Sec 2 Chemistry II 知识点包括：
 
 - What a precipitate is
 - Predicting whether a precipitate forms

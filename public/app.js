@@ -1,9 +1,10 @@
-import { APP_VERSION } from "/version.js?v=2026.05.24.3";
+import { APP_VERSION } from "/version.js?v=2026.05.24.4";
 
 const state = {
   profile: null,
   sessionId: null,
   topic: null,
+  topics: [],
   selectedSkillId: null,
   lesson: null,
   mastery: null,
@@ -268,6 +269,7 @@ function saveLocalState() {
     profileStateKey(state.profile.id),
     JSON.stringify({
       mastery: state.mastery,
+      selectedTopicId: state.topic?.id ?? null,
       selectedSkillId: state.selectedSkillId,
       log: state.log.slice(0, 12)
     })
@@ -340,6 +342,23 @@ function renderTopicMap() {
   const average = topicAverage(state.topic);
   const topicLevel = masteryLevel(average);
   const skillLookup = new Map(state.skills.map((skill) => [skill.id, skill]));
+  const topicButtons = (state.topics.length ? state.topics : [state.topic])
+    .map((topic) => {
+      const score = topicAverage(topic);
+      const level = masteryLevel(score);
+      const selected = state.topic?.id === topic.id;
+      return `
+        <button class="topic-option module-option ${selected ? "selected" : ""}" type="button" data-topic-id="${escapeHtml(topic.id)}">
+          <span class="traffic-light ${level.className}" aria-hidden="true"></span>
+          <span>
+            <strong>${escapeHtml(topic.title)}</strong>
+            <span>${escapeHtml(topic.summary)}</span>
+          </span>
+          <span class="topic-score">${score}%</span>
+        </button>
+      `;
+    })
+    .join("");
   const skillButtons = state.topic.skillIds
     .map((skillId) => {
       const skill = skillLookup.get(skillId);
@@ -363,28 +382,38 @@ function renderTopicMap() {
     .join("");
 
   els.topicList.innerHTML = `
-    <button class="topic-option module-option ${state.selectedSkillId ? "" : "selected"}" type="button" data-topic-id="${escapeHtml(state.topic.id)}">
+    <div class="topic-subtitle">Modules</div>
+    ${topicButtons}
+    <div class="topic-subtitle">Sub-skills</div>
+    <button class="topic-option module-option ${state.selectedSkillId ? "" : "selected"}" type="button" data-current-topic-id="${escapeHtml(state.topic.id)}">
       <span class="traffic-light ${topicLevel.className}" aria-hidden="true"></span>
       <span>
-        <strong>${escapeHtml(state.topic.title)}</strong>
-        <span>${escapeHtml(state.topic.summary)}</span>
+        <strong>All ${escapeHtml(state.topic.title)}</strong>
+        <span>Use this to diagnose and practise the whole module.</span>
       </span>
       <span class="topic-score">${average}%</span>
     </button>
-    <div class="topic-subtitle">Sub-skills</div>
     ${skillButtons}
   `;
 
-  const moduleButton = els.topicList.querySelector("[data-topic-id]");
-  moduleButton?.addEventListener("click", () => {
-    startSession({ selectedSkillId: null, reset: false }).catch((error) => {
+  for (const button of els.topicList.querySelectorAll("[data-topic-id]")) {
+    button.addEventListener("click", () => {
+      startSession({ topicId: button.dataset.topicId, selectedSkillId: null, reset: false }).catch((error) => {
+        els.lessonBox.textContent = error.message;
+      });
+    });
+  }
+
+  const currentModuleButton = els.topicList.querySelector("[data-current-topic-id]");
+  currentModuleButton?.addEventListener("click", () => {
+    startSession({ topicId: state.topic.id, selectedSkillId: null, reset: false }).catch((error) => {
       els.lessonBox.textContent = error.message;
     });
   });
 
   for (const button of els.topicList.querySelectorAll("[data-skill-id]")) {
     button.addEventListener("click", () => {
-      startSession({ selectedSkillId: button.dataset.skillId, reset: false }).catch((error) => {
+      startSession({ topicId: state.topic.id, selectedSkillId: button.dataset.skillId, reset: false }).catch((error) => {
         els.lessonBox.textContent = error.message;
       });
     });
@@ -411,7 +440,9 @@ function renderQuestion() {
 
 function renderMastery() {
   const mastery = state.mastery ?? {};
-  els.masteryList.innerHTML = state.skills
+  const topicSkillIds = new Set(state.topic?.skillIds ?? []);
+  const displayedSkills = topicSkillIds.size ? state.skills.filter((skill) => topicSkillIds.has(skill.id)) : state.skills;
+  els.masteryList.innerHTML = displayedSkills
     .map((skill) => {
       const score = Number(mastery[skill.id] ?? 35);
       const level = score >= 75 ? "high" : score >= 50 ? "mid" : "low";
@@ -507,16 +538,21 @@ async function compressImage(file) {
 
 async function startSession(options = {}) {
   const reset = typeof options === "boolean" ? options : Boolean(options.reset);
-  const selectedSkillId = typeof options === "object" && "selectedSkillId" in options ? options.selectedSkillId : state.selectedSkillId;
   if (!state.profile) {
     return;
   }
   const local = reset ? {} : loadLocalState();
+  const selectedTopicId =
+    typeof options === "object" && "topicId" in options
+      ? options.topicId
+      : state.topic?.id ?? local.selectedTopicId ?? "sec1_foundations";
+  const selectedSkillId = typeof options === "object" && "selectedSkillId" in options ? options.selectedSkillId : state.selectedSkillId;
+  const effectiveTopicId = selectedTopicId || "sec1_foundations";
   const effectiveSkillId = reset ? null : selectedSkillId;
   const payload = await api("/api/session/start", {
     method: "POST",
     body: JSON.stringify({
-      topicId: "precipitation_reactions",
+      topicId: effectiveTopicId,
       skillId: effectiveSkillId,
       studentId: state.profile.id,
       studentName: state.profile.name
@@ -526,10 +562,11 @@ async function startSession(options = {}) {
 
   state.sessionId = payload.sessionId;
   state.topic = payload.topic;
-  state.selectedSkillId = effectiveSkillId ?? local.selectedSkillId ?? null;
+  state.topics = topicsPayload.topics;
+  state.selectedSkillId = payload.topic.skillIds.includes(effectiveSkillId) ? effectiveSkillId : null;
   state.lesson = payload.lesson;
   state.skills = topicsPayload.skills;
-  state.mastery = local.mastery || payload.mastery;
+  state.mastery = { ...payload.mastery, ...(local.mastery || {}) };
   state.currentQuestion = payload.question;
   state.log = local.log || [];
 
@@ -543,7 +580,7 @@ async function startSession(options = {}) {
   renderLog();
 
   if (reset) {
-    addLog("Restarted", "Reset to the diagnostic question for Precipitation Reactions.");
+    addLog("Restarted", `Reset to the diagnostic question for ${state.topic.title}.`);
   } else if (!state.log.length) {
     addLog("Session started", "Start with a short diagnostic, then the tutor will teach and practise based on the answer.");
   }
@@ -561,7 +598,7 @@ async function selectProfile(profileId) {
   migrateLegacyState(profile.id);
   els.profileGate.classList.add("hidden");
   const local = loadLocalState();
-  await startSession({ selectedSkillId: local.selectedSkillId ?? null, reset: false });
+  await startSession({ topicId: local.selectedTopicId ?? "sec1_foundations", selectedSkillId: local.selectedSkillId ?? null, reset: false });
 }
 
 async function addProfile(name) {
@@ -671,6 +708,19 @@ function handleNextQuestion() {
 
 function fillSampleAnswer() {
   const samples = {
+    sec1_diag_001:
+      "Particles move randomly and move faster when warm, so diffusion is faster. Mg2+ and Cl- form MgCl2 because two Cl- ions balance one Mg2+. This is neutralisation, forming sodium chloride and water.",
+    sec1_lab_001:
+      "Use a pipette because it measures a fixed 25.0 cm3 volume more accurately than a beaker or measuring cylinder.",
+    sec1_particles_001:
+      "Smell particles move randomly. In a warm room they have more kinetic energy and move faster, so diffusion is faster.",
+    sec1_bonding_001:
+      "MgCl2. One Mg2+ ion needs two Cl- ions to make the total charge zero. This is ionic bonding.",
+    sec1_equations_001: "2Mg + O2 -> 2MgO",
+    sec1_acid_base_001:
+      "This is neutralisation. Hydrochloric acid + sodium hydroxide -> sodium chloride + water.",
+    sec1_observation_001:
+      "Bubbles forming and magnesium disappearing are observations. The gas is hydrogen. A lighted splint gives a squeaky pop.",
     ppt_concept_001: "A precipitate is an insoluble solid formed when ions in aqueous solutions react.",
     ppt_concept_bridge_001:
       "The cloudy white solid is the precipitate. It shows an insoluble product formed.",
@@ -691,9 +741,13 @@ function fillSampleAnswer() {
 }
 
 function explainAgain() {
+  const message =
+    state.topic?.id === "sec1_foundations"
+      ? "For Sec 1 foundations, first name the rule: particles explain matter, charges explain formulae, and observations support inferences."
+      : "Think of precipitation as ions meeting in water and forming a solid that can no longer stay dissolved.";
   addLog(
     "Explained differently",
-    "Think of precipitation as ions meeting in water and forming a solid that can no longer stay dissolved."
+    message
   );
 }
 
