@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chem Coach for NUSH</title>
-    <link rel="stylesheet" href="/styles.css?v=2026.05.25.1" />
+    <link rel="stylesheet" href="/styles.css?v=2026.05.25.2" />
   </head>
   <body>
     <div id="updateBanner" class="update-banner hidden" role="status" aria-live="polite">
@@ -78,7 +78,7 @@
           </button>
           <button id="guideBtn" class="guide-button" type="button">Guide</button>
           <span id="envBadge">Local</span>
-          <span id="versionBadge">Version 2026.05.25.1</span>
+          <span id="versionBadge">Version 2026.05.25.2</span>
           <span id="sessionBadge">Session starting</span>
         </div>
       </header>
@@ -94,30 +94,25 @@
           <div id="topicList" class="topic-list"></div>
         </section>
 
-        <section class="panel tutor-panel" aria-labelledby="tutor-title">
-          <div class="panel-header">
-            <div>
-              <p class="eyebrow">Today</p>
-              <h2 id="tutor-title">Precipitation Reactions</h2>
-            </div>
-            <button id="restartBtn" class="icon-button" type="button" title="Restart">↺</button>
-          </div>
-          <div id="lessonBox" class="lesson-box"></div>
-          <div class="teacher-actions">
-            <button id="explainBtn" type="button">Explain Differently</button>
-            <button id="sampleBtn" type="button">Fill Sample Answer</button>
-          </div>
-          <div class="session-log" id="sessionLog" aria-live="polite"></div>
-        </section>
-
         <section class="panel practice-panel" aria-labelledby="practice-title">
           <div class="panel-header">
             <div>
               <p class="eyebrow">Practice</p>
               <h2 id="practice-title">Current Question</h2>
             </div>
-            <span id="difficultyTag" class="tag">diagnostic</span>
+            <div class="practice-header-actions">
+              <span id="difficultyTag" class="tag">diagnostic</span>
+              <button id="restartBtn" class="icon-button" type="button" title="Restart">↺</button>
+            </div>
           </div>
+
+          <details class="support-details">
+            <summary>Concept support</summary>
+            <div id="lessonBox" class="lesson-box"></div>
+            <div class="teacher-actions">
+              <button id="explainBtn" type="button">Explain Differently</button>
+            </div>
+          </details>
 
           <article class="question-box">
             <h3 id="questionTitle">Loading</h3>
@@ -145,9 +140,14 @@
           <div class="practice-actions">
             <button id="gradeBtn" class="primary" type="button">Submit for Grading</button>
             <button id="nextBtn" type="button" disabled>Next Question</button>
+            <button id="sampleBtn" type="button">Fill Sample Answer</button>
           </div>
 
           <div id="feedbackBox" class="feedback hidden"></div>
+          <details class="activity-details">
+            <summary>Activity</summary>
+            <div class="session-log" id="sessionLog" aria-live="polite"></div>
+          </details>
         </section>
 
         <aside class="panel mastery-panel" aria-labelledby="mastery-title">
@@ -162,6 +162,6 @@
       </main>
     </div>
 
-    <script type="module" src="/app.js?v=2026.05.25.1"></script>
+    <script type="module" src="/app.js?v=2026.05.25.2"></script>
   </body>
 </html>

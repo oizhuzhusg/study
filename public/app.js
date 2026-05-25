@@ -1,4 +1,4 @@
-import { APP_VERSION } from "/version.js?v=2026.05.25.1";
+import { APP_VERSION } from "/version.js?v=2026.05.25.2";
 
 const state = {
   profile: null,

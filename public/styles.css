@@ -332,9 +332,8 @@ button:disabled {
 .workspace {
   display: grid;
   grid-template-columns:
-    minmax(250px, 0.85fr)
-    minmax(260px, 0.95fr)
-    minmax(360px, 1.35fr)
+    minmax(250px, 0.9fr)
+    minmax(420px, 1.55fr)
     minmax(280px, 0.85fr);
   gap: 16px;
   align-items: start;
@@ -366,6 +365,12 @@ button:disabled {
   min-width: 40px;
   padding: 0;
   font-size: 18px;
+}
+
+.practice-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .topic-list {
@@ -448,6 +453,39 @@ button:disabled {
   gap: 12px;
 }
 
+.support-details,
+.activity-details {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfb;
+  padding: 12px;
+}
+
+.support-details {
+  margin-bottom: 16px;
+}
+
+.activity-details {
+  margin-top: 16px;
+}
+
+.support-details summary,
+.activity-details summary {
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.support-details[open] summary,
+.activity-details[open] summary {
+  margin-bottom: 12px;
+}
+
+.support-details .teacher-actions {
+  margin-top: 12px;
+}
+
 .lesson-block {
   border-left: 3px solid var(--accent);
   background: var(--surface-muted);
@@ -516,7 +554,6 @@ button:disabled {
 .session-log {
   display: grid;
   gap: 10px;
-  margin-top: 16px;
   max-height: 300px;
   overflow: auto;
 }
