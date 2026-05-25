@@ -1,4 +1,4 @@
-import { APP_VERSION } from "/version.js?v=2026.05.24.5";
+import { APP_VERSION } from "/version.js?v=2026.05.25.1";
 
 const state = {
   profile: null,
@@ -303,21 +303,18 @@ function renderLesson() {
 
   els.lessonBox.innerHTML = `
     <div class="lesson-block">
-      <h3>Concept</h3>
+      <h3>Key idea</h3>
       <p>${escapeHtml(lesson.short)}</p>
     </div>
     <div class="lesson-block">
       <h3>Example</h3>
       <p>${escapeHtml(lesson.example)}</p>
     </div>
-    <div class="lesson-block">
-      <h3>Problem-Solving Steps</h3>
+    <details class="lesson-details">
+      <summary>Steps and reminder</summary>
       <ol>${lesson.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>
-    </div>
-    <div class="lesson-block">
-      <h3>Reminder</h3>
       <p>${escapeHtml(lesson.keyReminder)}</p>
-    </div>
+    </details>
   `;
 }
 
@@ -352,11 +349,10 @@ function renderTopicMap() {
       const level = masteryLevel(score);
       const selected = state.topic?.id === topic.id;
       return `
-        <button class="topic-option module-option ${selected ? "selected" : ""}" type="button" data-topic-id="${escapeHtml(topic.id)}">
+        <button class="topic-option module-option ${selected ? "selected" : ""}" type="button" data-topic-id="${escapeHtml(topic.id)}" title="${escapeHtml(topic.summary)}">
           <span class="traffic-light ${level.className}" aria-hidden="true"></span>
           <span>
             <strong>${escapeHtml(topic.title)}</strong>
-            <span>${escapeHtml(topic.summary)}</span>
           </span>
           <span class="topic-score">${score}%</span>
         </button>
@@ -372,11 +368,10 @@ function renderTopicMap() {
       const level = masteryLevel(score);
       const selected = state.selectedSkillId === skillId;
       return `
-        <button class="topic-option skill-option ${selected ? "selected" : ""}" type="button" data-skill-id="${escapeHtml(skillId)}">
+        <button class="topic-option skill-option ${selected ? "selected" : ""}" type="button" data-skill-id="${escapeHtml(skillId)}" title="${escapeHtml(skill.description)}">
           <span class="traffic-light ${level.className}" aria-hidden="true"></span>
           <span>
             <strong>${escapeHtml(skill.label)}</strong>
-            <span>${escapeHtml(skill.description)}</span>
           </span>
           <span class="topic-score">${score}%</span>
         </button>
@@ -401,11 +396,10 @@ function renderTopicMap() {
     <div class="topic-subtitle">Modules</div>
     ${topicButtons}
     <div class="topic-subtitle">Sub-skills</div>
-    <button class="topic-option module-option ${state.selectedSkillId ? "" : "selected"}" type="button" data-current-topic-id="${escapeHtml(state.topic.id)}">
+    <button class="topic-option module-option ${state.selectedSkillId ? "" : "selected"}" type="button" data-current-topic-id="${escapeHtml(state.topic.id)}" title="Diagnose and practise the whole module.">
       <span class="traffic-light ${topicLevel.className}" aria-hidden="true"></span>
       <span>
-        <strong>All ${escapeHtml(state.topic.title)}</strong>
-        <span>Use this to diagnose and practise the whole module.</span>
+        <strong>All Topics</strong>
       </span>
       <span class="topic-score">${average}%</span>
     </button>
@@ -588,7 +582,7 @@ async function startSession(options = {}) {
 
   els.envBadge.textContent = "Worker";
   els.profileBadge.textContent = state.profile.name;
-  els.sessionBadge.textContent = `Session ${state.sessionId.slice(0, 8)}`;
+  els.sessionBadge.textContent = "Ready";
   renderLesson();
   renderQuestion();
   renderTopicMap();
@@ -596,9 +590,9 @@ async function startSession(options = {}) {
   renderLog();
 
   if (reset) {
-    addLog("Restarted", `Reset to the diagnostic question for ${state.topic.title}.`);
+    addLog("Restarted", "Diagnostic reset.");
   } else if (!state.log.length) {
-    addLog("Session started", "Start with a short diagnostic, then the tutor will teach and practise based on the answer.");
+    addLog("Session started", "Start with a diagnostic, then practise weak skills.");
   }
 }
 
