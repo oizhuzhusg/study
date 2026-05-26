@@ -25,13 +25,19 @@ function ruleMatches(ruleId, text) {
     case "apparatus_pipette":
       return includesAny(text, ["pipette"]);
     case "accuracy_reason":
-      return includesAny(text, ["accurate", "accuracy", "fixed volume", "25.0"]);
+      return includesAny(text, ["accurate", "accuracy", "fixed volume", "25.0", "calibrated", "marking", "graduation"]);
     case "clear_comparison":
-      return includesAny(text, ["beaker", "measuring cylinder", "less accurate", "more accurate"]);
+      return includesAny(text, ["beaker", "measuring cylinder", "less accurate", "more accurate", "most accurate"]);
     case "particle_motion":
       return includesAny(text, ["particle", "particles"]) && includesAny(text, ["move", "random", "kinetic"]);
     case "temperature_effect":
-      return includesAny(text, ["warm", "temperature", "heat", "higher"]) && includesAny(text, ["faster", "kinetic energy", "more energy"]);
+      return (
+        includesAny(text, ["warm", "temperature", "heat", "higher"]) &&
+        includesAny(text, ["faster", "kinetic energy", "more energy"])
+      ) || (
+        includesAny(text, ["cold", "lower", "less"]) &&
+        includesAny(text, ["slower", "less kinetic energy", "less energy"])
+      );
     case "diffusion":
       return includesAny(text, ["diffusion", "diffuse", "spread"]);
     case "mgcl2":
@@ -49,7 +55,7 @@ function ruleMatches(ruleId, text) {
     case "acid_alkali":
       return includesAny(text, ["acid"]) && includesAny(text, ["alkali", "base", "hydroxide"]);
     case "salt_water":
-      return includesAny(text, ["salt", "sodium chloride", "nacl"]) && includesAny(text, ["water", "h2o"]);
+      return includesAny(text, ["salt", "sodium chloride", "nacl", "potassium chloride", "kcl"]) && includesAny(text, ["water", "h2o"]);
     case "bubbles_observation":
       return includesAny(text, ["bubble", "effervescence", "fizz", "magnesium disappears", "mg disappears"]);
     case "hydrogen":
@@ -181,25 +187,59 @@ function ruleMatches(ruleId, text) {
   }
 }
 
-function buildStudentFeedback(score, maxScore, weakSkills, question) {
+function buildStudentFeedback(score, maxScore, weakSkills, question, missingPoints = []) {
   if (score === maxScore) {
     return "Strong work. Your answer covers the key chemistry points, so the next question will move you slightly forward.";
   }
 
   const weakText = weakSkills.length ? weakSkills.join(", ") : "the missing rubric points";
-  return `Good attempt. The next best move is to strengthen ${weakText}. For this question, compare your answer with the expected answer: ${question.expectedAnswer}`;
+  const missingText = missingPoints[0] ? ` Next, add this clearly: ${missingPoints[0]}` : "";
+  return `Good attempt. The next best move is to strengthen ${weakText}.${missingText}`;
 }
 
-export function gradeWithRules(question, answerText) {
+export function getRuleRubricResults(question, answerText) {
   const normalized = normalizeAnswer(answerText);
+  return question.rubric.map((rule) => {
+    const met = ruleMatches(rule.id, normalized);
+    return {
+      id: rule.id,
+      met,
+      evidence: met ? "Matched rubric evidence in the answer." : "",
+      source: "local_rules"
+    };
+  });
+}
+
+export function finalizeRubricGrade(question, rubricResults, options = {}) {
+  const resultById = new Map();
+  for (const result of rubricResults ?? []) {
+    if (!result || typeof result.id !== "string") {
+      continue;
+    }
+    resultById.set(result.id, {
+      id: result.id,
+      met: Boolean(result.met),
+      evidence: String(result.evidence ?? ""),
+      source: result.source ?? options.source ?? "rubric"
+    });
+  }
+
   const correct = [];
   const missing = [];
   const weakSkillSet = new Set();
   let score = 0;
   const maxScore = question.rubric.reduce((sum, rule) => sum + rule.points, 0);
+  const normalizedResults = [];
 
   for (const rule of question.rubric) {
-    if (ruleMatches(rule.id, normalized)) {
+    const result = resultById.get(rule.id) ?? {
+      id: rule.id,
+      met: false,
+      evidence: "",
+      source: options.source ?? "rubric"
+    };
+    normalizedResults.push(result);
+    if (result.met) {
       correct.push(rule.criterion);
       score += rule.points;
     } else {
@@ -218,7 +258,12 @@ export function gradeWithRules(question, answerText) {
     };
   });
 
-  const nextQuestion = nextQuestionForWeakSkills(weakSkills, question.id);
+  const nextQuestion = nextQuestionForWeakSkills(
+    weakSkills,
+    question.id,
+    options.topicId ?? question.topicId,
+    options.answeredQuestionIds ?? []
+  );
   return {
     score,
     max_score: maxScore,
@@ -228,10 +273,18 @@ export function gradeWithRules(question, answerText) {
     weak_skills: weakSkills,
     mastery_updates: masteryUpdates,
     next_action: weakSkills.length ? `practice_${weakSkills[0]}` : "increase_difficulty",
-    feedback_to_student: buildStudentFeedback(score, maxScore, weakSkills, question),
+    feedback_to_student: buildStudentFeedback(score, maxScore, weakSkills, question, missing),
     next_question_id: nextQuestion.id,
-    source: "local_rules"
+    rubric_results: normalizedResults,
+    source: options.source ?? "local_rules"
   };
+}
+
+export function gradeWithRules(question, answerText, options = {}) {
+  return finalizeRubricGrade(question, getRuleRubricResults(question, answerText), {
+    ...options,
+    source: "local_rules"
+  });
 }
 
 export function applyMasteryUpdates(currentMastery, updates) {
@@ -245,10 +298,10 @@ export function applyMasteryUpdates(currentMastery, updates) {
   return next;
 }
 
-export function gradeAnswerFallback(questionId, answerText) {
+export function gradeAnswerFallback(questionId, answerText, options = {}) {
   const question = getQuestion(questionId);
   if (!question) {
     throw new Error(`Unknown question: ${questionId}`);
   }
-  return gradeWithRules(question, answerText);
+  return gradeWithRules(question, answerText, options);
 }

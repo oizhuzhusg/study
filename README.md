@@ -36,6 +36,8 @@ Add your OpenAI key to `.dev.vars`:
 
 ```text
 OPENAI_API_KEY=sk-...
+OPENAI_TRANSCRIBE_MODEL=gpt-4.1-mini
+OPENAI_GRADING_MODEL=gpt-4.1-nano
 ```
 
 Run locally:
@@ -50,7 +52,7 @@ Open:
 http://localhost:8787
 ```
 
-If `OPENAI_API_KEY` is not configured, the app still runs in demo mode. Photo transcription returns the expected answer so the learning loop can be tested without spending API credits.
+If `OPENAI_API_KEY` is not configured, the app still runs in demo mode. Photo transcription returns the expected answer so the learning loop can be tested without spending API credits. Photo transcription and grading can use different models; transcription defaults to `gpt-4.1-mini`, and grading defaults to `gpt-4.1-nano`.
 
 ## Scripts
 

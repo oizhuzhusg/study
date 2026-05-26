@@ -1,4 +1,4 @@
-import { gradeWithRules } from "./grading.js";
+import { finalizeRubricGrade, getRuleRubricResults, gradeWithRules } from "./grading.js";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 
@@ -21,51 +21,26 @@ const gradeSchema = {
   type: "object",
   additionalProperties: false,
   properties: {
-    score: { type: "integer" },
-    max_score: { type: "integer" },
-    correct_points: {
-      type: "array",
-      items: { type: "string" }
-    },
-    missing_points: {
-      type: "array",
-      items: { type: "string" }
-    },
-    misconceptions: {
-      type: "array",
-      items: { type: "string" }
-    },
-    weak_skills: {
-      type: "array",
-      items: { type: "string" }
-    },
-    mastery_updates: {
+    rubric_results: {
       type: "array",
       items: {
         type: "object",
         additionalProperties: false,
         properties: {
-          skill_id: { type: "string" },
-          delta: { type: "integer" },
-          reason: { type: "string" }
+          id: { type: "string" },
+          met: { type: "boolean" },
+          evidence: { type: "string" }
         },
-        required: ["skill_id", "delta", "reason"]
+        required: ["id", "met", "evidence"]
       }
     },
-    next_action: { type: "string" },
+    misconceptions: {
+      type: "array",
+      items: { type: "string" }
+    },
     feedback_to_student: { type: "string" }
   },
-  required: [
-    "score",
-    "max_score",
-    "correct_points",
-    "missing_points",
-    "misconceptions",
-    "weak_skills",
-    "mastery_updates",
-    "next_action",
-    "feedback_to_student"
-  ]
+  required: ["rubric_results", "misconceptions", "feedback_to_student"]
 };
 
 function hasOpenAIKey(env) {
@@ -91,7 +66,7 @@ function extractOutputText(payload) {
   return chunks.join("\n").trim();
 }
 
-async function callOpenAIJson(env, name, schema, input, maxOutputTokens = 1200) {
+async function callOpenAIJson(env, name, schema, input, maxOutputTokens = 1200, model = null) {
   const response = await fetch(OPENAI_RESPONSES_URL, {
     method: "POST",
     headers: {
@@ -99,7 +74,7 @@ async function callOpenAIJson(env, name, schema, input, maxOutputTokens = 1200) 
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: env.OPENAI_MODEL || "gpt-4.1-nano",
+      model: model || env.OPENAI_MODEL || "gpt-4.1-nano",
       input,
       text: {
         format: {
@@ -160,21 +135,42 @@ export async function transcribeAnswerPhoto(env, question, imageDataUrl) {
         ]
       }
     ],
-    900
+    900,
+    env.OPENAI_TRANSCRIBE_MODEL || env.OPENAI_VISION_MODEL || env.OPENAI_MODEL || "gpt-4.1-mini"
   );
   return { ...result, source: "openai" };
 }
 
-export async function gradeAnswerWithOpenAI(env, question, answerText) {
+function mergeRubricResults(question, aiResults, localResults) {
+  const aiById = new Map((aiResults ?? []).map((result) => [result.id, result]));
+  const localById = new Map((localResults ?? []).map((result) => [result.id, result]));
+  return question.rubric.map((rule) => {
+    const ai = aiById.get(rule.id);
+    const local = localById.get(rule.id);
+    const met = Boolean(local?.met || ai?.met);
+    const evidence = local?.met ? local.evidence : ai?.evidence || "";
+    return {
+      id: rule.id,
+      met,
+      evidence,
+      source: local?.met ? "local_rules" : "openai"
+    };
+  });
+}
+
+export async function gradeAnswerWithOpenAI(env, question, answerText, options = {}) {
   if (!hasOpenAIKey(env)) {
-    return gradeWithRules(question, answerText);
+    return gradeWithRules(question, answerText, options);
   }
 
   const maxScore = question.rubric.reduce((sum, item) => sum + item.points, 0);
   const prompt = [
     "You are a careful NUSH Year 2 Chemistry tutor.",
-    "Grade the student's answer using the provided rubric. Focus on diagnosing the underlying chemistry skill gap.",
+    "Judge each rubric item separately. Do not calculate the final score.",
+    "Return exactly one rubric_results item for every rubric id.",
+    "Mark a rubric item met when the answer gives clear equivalent evidence, even if the wording is different.",
     "Be fair: accept equivalent notation such as -> for arrows, sulfate/sulphate, and reasonable charge notation.",
+    "Important examples: 'diffusion speed increases' satisfies a diffusion link; 'fixed 25.0 cm3 marking' satisfies accurate fixed-volume pipette reasoning.",
     "Do not punish minor English grammar if the chemistry is clear.",
     "Return only JSON matching the schema.",
     "",
@@ -198,20 +194,22 @@ export async function gradeAnswerWithOpenAI(env, question, answerText) {
         content: [{ type: "input_text", text: prompt }]
       }
     ],
-    1400
+    1200,
+    env.OPENAI_GRADING_MODEL || env.OPENAI_MODEL || "gpt-4.1-nano"
   );
 
-  const cappedScore = Math.max(0, Math.min(maxScore, Number(result.score ?? 0)));
-  const allowedSkills = new Set(question.focusSkills);
-  const weakSkills = (result.weak_skills ?? []).filter((skill) => allowedSkills.has(skill));
-  const localGrade = gradeWithRules(question, answerText);
-  const masteryUpdates = (result.mastery_updates ?? []).filter((update) => allowedSkills.has(update.skill_id));
+  const localResults = getRuleRubricResults(question, answerText);
+  const mergedResults = mergeRubricResults(question, result.rubric_results, localResults);
+  const finalGrade = finalizeRubricGrade(question, mergedResults, {
+    ...options,
+    source: "openai_validated"
+  });
+
   return {
-    ...result,
-    score: cappedScore,
+    ...finalGrade,
     max_score: maxScore,
-    weak_skills: weakSkills,
-    mastery_updates: masteryUpdates.length ? masteryUpdates : localGrade.mastery_updates,
-    source: "openai"
+    misconceptions: finalGrade.misconceptions,
+    feedback_to_student: finalGrade.feedback_to_student,
+    source: "openai_validated"
   };
 }

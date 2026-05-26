@@ -83,6 +83,38 @@ export const questions = [
     focusSkills: ["experimental_chemistry", "explanation_quality"]
   },
   {
+    id: "sec1_lab_002",
+    topicId: "sec1_foundations",
+    type: "practical_skills",
+    difficulty: "basic",
+    title: "Accurate fixed volume",
+    prompt:
+      "A student must transfer exactly 25.0 cm3 of hydrochloric acid into a conical flask.\n\nChoose the best apparatus from pipette, beaker, or measuring cylinder. Explain your choice.",
+    expectedAnswer:
+      "Use a pipette because it is calibrated to deliver a fixed 25.0 cm3 volume accurately. A beaker or measuring cylinder is less accurate for this exact volume.",
+    rubric: [
+      {
+        id: "apparatus_pipette",
+        skill: "experimental_chemistry",
+        points: 1,
+        criterion: "Chooses a pipette."
+      },
+      {
+        id: "accuracy_reason",
+        skill: "experimental_chemistry",
+        points: 1,
+        criterion: "Explains that a pipette measures a fixed volume more accurately."
+      },
+      {
+        id: "clear_comparison",
+        skill: "explanation_quality",
+        points: 1,
+        criterion: "Compares it clearly with less accurate apparatus."
+      }
+    ],
+    focusSkills: ["experimental_chemistry", "explanation_quality"]
+  },
+  {
     id: "sec1_particles_001",
     topicId: "sec1_foundations",
     type: "particle_model",
@@ -92,6 +124,70 @@ export const questions = [
       "Use kinetic theory to explain why food smells spread faster in a warm room than in a cold room.",
     expectedAnswer:
       "Gas particles move randomly. In a warm room, the particles have more kinetic energy and move faster, so they diffuse through the air faster.",
+    rubric: [
+      {
+        id: "particle_motion",
+        skill: "kinetic_theory",
+        points: 1,
+        criterion: "States that particles move randomly."
+      },
+      {
+        id: "temperature_effect",
+        skill: "kinetic_theory",
+        points: 1,
+        criterion: "Explains that higher temperature gives particles more kinetic energy or faster movement."
+      },
+      {
+        id: "diffusion",
+        skill: "kinetic_theory",
+        points: 1,
+        criterion: "Connects faster particle movement to faster diffusion."
+      }
+    ],
+    focusSkills: ["kinetic_theory", "explanation_quality"]
+  },
+  {
+    id: "sec1_particles_002",
+    topicId: "sec1_foundations",
+    type: "particle_model",
+    difficulty: "basic",
+    title: "Perfume in a warm classroom",
+    prompt:
+      "A bottle of perfume is opened in a classroom. The smell reaches the back of the room faster when the classroom is warm.\n\nUse kinetic theory to explain why.",
+    expectedAnswer:
+      "Perfume particles move randomly through the air. At a higher temperature they have more kinetic energy and move faster, so they diffuse faster.",
+    rubric: [
+      {
+        id: "particle_motion",
+        skill: "kinetic_theory",
+        points: 1,
+        criterion: "States that particles move randomly."
+      },
+      {
+        id: "temperature_effect",
+        skill: "kinetic_theory",
+        points: 1,
+        criterion: "Explains that higher temperature gives particles more kinetic energy or faster movement."
+      },
+      {
+        id: "diffusion",
+        skill: "kinetic_theory",
+        points: 1,
+        criterion: "Connects faster particle movement to faster diffusion."
+      }
+    ],
+    focusSkills: ["kinetic_theory", "explanation_quality"]
+  },
+  {
+    id: "sec1_particles_003",
+    topicId: "sec1_foundations",
+    type: "particle_model",
+    difficulty: "basic",
+    title: "Diffusion in a cold room",
+    prompt:
+      "A smell spreads more slowly in a cold room than in a warm room.\n\nUse kinetic theory to explain the difference.",
+    expectedAnswer:
+      "In a cold room, gas particles have less kinetic energy and move more slowly. Since the particles move around more slowly, diffusion is slower.",
     rubric: [
       {
         id: "particle_motion",
@@ -205,6 +301,38 @@ export const questions = [
         skill: "acid_base_basics",
         points: 1,
         criterion: "Names sodium chloride and water as products."
+      }
+    ],
+    focusSkills: ["acid_base_basics", "explanation_quality"]
+  },
+  {
+    id: "sec1_acid_base_002",
+    topicId: "sec1_foundations",
+    type: "acid_base",
+    difficulty: "basic",
+    title: "Another neutralisation",
+    prompt:
+      "Hydrochloric acid reacts with potassium hydroxide.\n\n1. What type of reaction is this?\n2. Name the products.",
+    expectedAnswer:
+      "This is neutralisation. Hydrochloric acid reacts with potassium hydroxide to form potassium chloride and water.",
+    rubric: [
+      {
+        id: "neutralisation",
+        skill: "acid_base_basics",
+        points: 1,
+        criterion: "Identifies the reaction as neutralisation."
+      },
+      {
+        id: "acid_alkali",
+        skill: "acid_base_basics",
+        points: 1,
+        criterion: "Recognises hydrochloric acid as the acid and potassium hydroxide as the alkali/base."
+      },
+      {
+        id: "salt_water",
+        skill: "acid_base_basics",
+        points: 1,
+        criterion: "Names potassium chloride and water as products."
       }
     ],
     focusSkills: ["acid_base_basics", "explanation_quality"]
@@ -395,6 +523,38 @@ export const questions = [
     focusSkills: ["redox_concepts", "observation_inference", "explanation_quality"]
   },
   {
+    id: "sec2_redox_002",
+    topicId: "sec2_chemistry_ii",
+    type: "redox",
+    difficulty: "basic",
+    title: "Displacement evidence",
+    prompt:
+      "A strip of zinc is placed in copper(II) sulfate solution. After some time, a brown coating appears on the zinc and the blue colour becomes paler.\n\nExplain the redox change.",
+    expectedAnswer:
+      "The brown coating is copper. Zinc is oxidised to Zn2+ and copper(II) ions are reduced to copper metal.",
+    rubric: [
+      {
+        id: "copper_solid",
+        skill: "observation_inference",
+        points: 1,
+        criterion: "Identifies the brown solid as copper."
+      },
+      {
+        id: "zinc_oxidised",
+        skill: "redox_concepts",
+        points: 1,
+        criterion: "States that zinc is oxidised to Zn2+."
+      },
+      {
+        id: "copper_reduced",
+        skill: "redox_concepts",
+        points: 1,
+        criterion: "States that Cu2+ is reduced to copper."
+      }
+    ],
+    focusSkills: ["redox_concepts", "observation_inference", "explanation_quality"]
+  },
+  {
     id: "sec2_oxidation_states_001",
     topicId: "sec2_chemistry_ii",
     type: "oxidation_states",
@@ -454,6 +614,38 @@ export const questions = [
         skill: "experimental_chemistry",
         points: 1,
         criterion: "Explains that swirling mixes the solutions evenly."
+      }
+    ],
+    focusSkills: ["volumetric_analysis", "experimental_chemistry"]
+  },
+  {
+    id: "sec2_titration_002",
+    topicId: "sec2_chemistry_ii",
+    type: "volumetric_analysis",
+    difficulty: "basic",
+    title: "Titration apparatus choices",
+    prompt:
+      "In a titration, a student measures 25.0 cm3 of sodium hydroxide and places it in a conical flask. Acid is then added until the indicator changes colour.\n\n1. Which apparatus should measure the 25.0 cm3 sodium hydroxide?\n2. Why is a burette used for the acid?",
+    expectedAnswer:
+      "A pipette should measure the fixed 25.0 cm3 sodium hydroxide accurately. A burette is used for the acid because it accurately delivers variable volumes and lets the titre be read.",
+    rubric: [
+      {
+        id: "apparatus_pipette",
+        skill: "experimental_chemistry",
+        points: 1,
+        criterion: "Chooses a pipette."
+      },
+      {
+        id: "accuracy_reason",
+        skill: "experimental_chemistry",
+        points: 1,
+        criterion: "Explains that a pipette measures a fixed volume more accurately."
+      },
+      {
+        id: "burette_reason",
+        skill: "volumetric_analysis",
+        points: 1,
+        criterion: "Explains that a burette accurately delivers/measures variable volume."
       }
     ],
     focusSkills: ["volumetric_analysis", "experimental_chemistry"]
@@ -669,6 +861,38 @@ export const questions = [
     }
   },
   {
+    id: "ppt_agcl_002",
+    topicId: "sec2_chemistry_ii",
+    type: "worked_practice",
+    difficulty: "basic",
+    title: "Silver chloride variation",
+    prompt:
+      "Silver nitrate solution is mixed with potassium chloride solution.\n\n1. State the observation.\n2. Identify the precipitate.\n3. Write the net ionic equation.",
+    expectedAnswer:
+      "A white precipitate forms. The precipitate is silver chloride, AgCl(s). Net ionic equation: Ag+(aq) + Cl-(aq) -> AgCl(s).",
+    rubric: [
+      {
+        id: "white_precipitate",
+        skill: "observation_inference",
+        points: 1,
+        criterion: "States that a white precipitate forms."
+      },
+      {
+        id: "agcl_precipitate",
+        skill: "solubility_prediction",
+        points: 1,
+        criterion: "Identifies AgCl as the precipitate."
+      },
+      {
+        id: "net_ionic",
+        skill: "ionic_equation",
+        points: 1,
+        criterion: "Writes Ag+(aq) + Cl-(aq) -> AgCl(s)."
+      }
+    ],
+    focusSkills: ["observation_inference", "solubility_prediction", "ionic_equation"]
+  },
+  {
     id: "ppt_solubility_001",
     topicId: "sec2_chemistry_ii",
     type: "prediction",
@@ -678,6 +902,38 @@ export const questions = [
       "Barium chloride solution is mixed with sodium sulfate solution.\n\n1. Predict whether a precipitate forms.\n2. Name or write the formula of the precipitate.",
     expectedAnswer:
       "A precipitate forms. The precipitate is barium sulfate, BaSO4(s).",
+    rubric: [
+      {
+        id: "precipitate_forms",
+        skill: "solubility_prediction",
+        points: 1,
+        criterion: "Predicts that a precipitate forms."
+      },
+      {
+        id: "baso4",
+        skill: "formulae",
+        points: 1,
+        criterion: "Identifies BaSO4 as the precipitate."
+      },
+      {
+        id: "state_solid",
+        skill: "state_symbols",
+        points: 1,
+        criterion: "Marks BaSO4 as solid if state symbols are used."
+      }
+    ],
+    focusSkills: ["solubility_prediction", "formulae", "state_symbols"]
+  },
+  {
+    id: "ppt_solubility_002",
+    topicId: "sec2_chemistry_ii",
+    type: "prediction",
+    difficulty: "basic",
+    title: "Another sulfate precipitate",
+    prompt:
+      "Barium nitrate solution is mixed with magnesium sulfate solution.\n\nPredict whether a precipitate forms and name or write its formula.",
+    expectedAnswer:
+      "A precipitate forms because barium sulfate is insoluble. The precipitate is BaSO4(s).",
     rubric: [
       {
         id: "precipitate_forms",
@@ -1004,37 +1260,31 @@ export function firstQuestionForSkill(skillId, topicId = "sec2_chemistry_ii") {
   );
 }
 
-export function nextQuestionForWeakSkills(weakSkills = [], answeredQuestionId = null, topicId = null) {
-  const answeredQuestion = answeredQuestionId ? getQuestion(answeredQuestionId) : null;
-  const targetTopicId = normalizeTopicId(topicId ?? answeredQuestion?.topicId ?? "sec2_chemistry_ii");
-  const topicQuestions = questions.filter((question) => question.topicId === targetTopicId);
-  for (const skill of weakSkills) {
-    const explicitNext = answeredQuestion?.nextByWeakSkill?.[skill];
-    if (explicitNext && getQuestion(explicitNext)?.topicId === targetTopicId) {
-      return getQuestion(explicitNext);
-    }
-    const focused = topicQuestions.find((question) => question.id !== answeredQuestionId && question.focusSkills.includes(skill));
-    if (focused) {
-      return focused;
-    }
-  }
-
+function orderedQuestionIdsForTopic(targetTopicId, topicQuestions) {
   const orderedByTopic = {
     sec1_foundations: [
       "sec1_lab_001",
+      "sec1_lab_002",
       "sec1_particles_001",
+      "sec1_particles_002",
+      "sec1_particles_003",
       "sec1_bonding_001",
       "sec1_equations_001",
       "sec1_acid_base_001",
+      "sec1_acid_base_002",
       "sec1_observation_001"
     ],
     sec2_chemistry_ii: [
       "sec2_acid_base_001",
       "sec2_redox_001",
+      "sec2_redox_002",
       "sec2_titration_001",
+      "sec2_titration_002",
       "sec2_qa_001",
       "ppt_agcl_001",
+      "ppt_agcl_002",
       "ppt_solubility_001",
+      "ppt_solubility_002",
       "ppt_spectators_001",
       "ppt_ionic_001",
       "ppt_mixed_001",
@@ -1043,7 +1293,37 @@ export function nextQuestionForWeakSkills(weakSkills = [], answeredQuestionId = 
       "sec2_titre_calc_001"
     ]
   };
-  const ordered = orderedByTopic[targetTopicId] ?? topicQuestions.map((question) => question.id);
-  const nextId = ordered.find((id) => id !== answeredQuestionId) ?? firstQuestionForTopic(targetTopicId).id;
+  const preferred = orderedByTopic[targetTopicId] ?? [];
+  const knownIds = new Set(preferred);
+  const remainingIds = topicQuestions.map((question) => question.id).filter((id) => !knownIds.has(id));
+  return [...preferred, ...remainingIds].filter((id) => topicQuestions.some((question) => question.id === id));
+}
+
+function firstAvailableQuestion(questionIds, answeredSet, answeredQuestionId) {
+  return questionIds.find((id) => !answeredSet.has(id)) ?? questionIds.find((id) => id !== answeredQuestionId) ?? questionIds[0];
+}
+
+export function nextQuestionForWeakSkills(weakSkills = [], answeredQuestionId = null, topicId = null, answeredQuestionIds = []) {
+  const answeredQuestion = answeredQuestionId ? getQuestion(answeredQuestionId) : null;
+  const targetTopicId = normalizeTopicId(topicId ?? answeredQuestion?.topicId ?? "sec2_chemistry_ii");
+  const topicQuestions = questions.filter((question) => question.topicId === targetTopicId);
+  const answeredSet = new Set(answeredQuestionIds.filter(Boolean));
+  if (answeredQuestionId) {
+    answeredSet.add(answeredQuestionId);
+  }
+
+  for (const skill of weakSkills) {
+    const explicitNext = answeredQuestion?.nextByWeakSkill?.[skill];
+    if (explicitNext && getQuestion(explicitNext)?.topicId === targetTopicId && !answeredSet.has(explicitNext)) {
+      return getQuestion(explicitNext);
+    }
+    const focused = topicQuestions.find((question) => !answeredSet.has(question.id) && question.focusSkills.includes(skill));
+    if (focused) {
+      return focused;
+    }
+  }
+
+  const ordered = orderedQuestionIdsForTopic(targetTopicId, topicQuestions);
+  const nextId = firstAvailableQuestion(ordered, answeredSet, answeredQuestionId) ?? firstQuestionForTopic(targetTopicId).id;
   return getQuestion(nextId) ?? firstQuestionForTopic(targetTopicId);
 }

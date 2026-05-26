@@ -14,7 +14,12 @@ cp .dev.vars.example .dev.vars
 npm run dev
 ```
 
-Add `OPENAI_API_KEY` to `.dev.vars` for real photo transcription and grading.
+Add `OPENAI_API_KEY` to `.dev.vars` for real photo transcription and grading. Optional model overrides:
+
+```text
+OPENAI_TRANSCRIBE_MODEL=gpt-4.1-mini
+OPENAI_GRADING_MODEL=gpt-4.1-nano
+```
 
 ## 2. Git
 

@@ -88,7 +88,9 @@ async function routeApi(request, env, ctx) {
       version: APP_VERSION,
       env: env.APP_ENV || "local",
       openaiConfigured: Boolean(env.OPENAI_API_KEY),
-      openaiModel: env.OPENAI_MODEL || "gpt-4.1-nano"
+      openaiModel: env.OPENAI_MODEL || "gpt-4.1-nano",
+      openaiTranscribeModel: env.OPENAI_TRANSCRIBE_MODEL || env.OPENAI_VISION_MODEL || env.OPENAI_MODEL || "gpt-4.1-mini",
+      openaiGradingModel: env.OPENAI_GRADING_MODEL || env.OPENAI_MODEL || "gpt-4.1-nano"
     });
   }
 
@@ -139,7 +141,12 @@ async function routeApi(request, env, ctx) {
 
   if (url.pathname === "/api/question/next" && request.method === "POST") {
     const body = await readJson(request);
-    const next = nextQuestionForWeakSkills(body.weakSkills ?? [], body.answeredQuestionId ?? null, body.topicId ?? null);
+    const next = nextQuestionForWeakSkills(
+      body.weakSkills ?? [],
+      body.answeredQuestionId ?? null,
+      body.topicId ?? null,
+      body.answeredQuestionIds ?? []
+    );
     return json({ question: publicQuestion(next) });
   }
 
@@ -181,16 +188,23 @@ async function routeApi(request, env, ctx) {
 
     let grade;
     let warning = null;
+    const answeredQuestionIds = Array.isArray(body.answeredQuestionIds) ? body.answeredQuestionIds : [question.id];
+    const gradeOptions = {
+      topicId: question.topicId,
+      answeredQuestionIds
+    };
     try {
-      grade = await gradeAnswerWithOpenAI(env, question, body.answerText);
+      grade = await gradeAnswerWithOpenAI(env, question, body.answerText, gradeOptions);
     } catch (error) {
       warning = error instanceof Error ? error.message : String(error);
-      grade = gradeAnswerFallback(question.id, body.answerText);
+      grade = gradeAnswerFallback(question.id, body.answerText, gradeOptions);
     }
 
     const currentMastery = body.mastery && typeof body.mastery === "object" ? body.mastery : defaultMastery();
     const updatedMastery = applyMasteryUpdates(currentMastery, grade.mastery_updates);
-    const nextQuestion = getQuestion(grade.next_question_id) ?? nextQuestionForWeakSkills(grade.weak_skills, question.id);
+    const nextQuestion =
+      getQuestion(grade.next_question_id) ??
+      nextQuestionForWeakSkills(grade.weak_skills, question.id, question.topicId, answeredQuestionIds);
 
     ctx.waitUntil(
       maybeSaveAttempt(env, {

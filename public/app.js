@@ -1,4 +1,4 @@
-import { APP_VERSION } from "/version.js?v=2026.05.25.2";
+import { APP_VERSION } from "/version.js?v=2026.05.26.1";
 
 const state = {
   profile: null,
@@ -11,6 +11,7 @@ const state = {
   skills: [],
   currentQuestion: null,
   pendingNextQuestion: null,
+  answeredQuestionIds: [],
   log: []
 };
 
@@ -275,6 +276,7 @@ function saveLocalState() {
       mastery: state.mastery,
       selectedTopicId: state.topic?.id ?? null,
       selectedSkillId: state.selectedSkillId,
+      answeredQuestionIds: state.answeredQuestionIds,
       log: state.log.slice(0, 12)
     })
   );
@@ -578,6 +580,7 @@ async function startSession(options = {}) {
   state.skills = topicsPayload.skills;
   state.mastery = { ...payload.mastery, ...(local.mastery || {}) };
   state.currentQuestion = payload.question;
+  state.answeredQuestionIds = reset ? [] : Array.from(new Set(local.answeredQuestionIds || []));
   state.log = local.log || [];
 
   els.envBadge.textContent = "Worker";
@@ -678,6 +681,7 @@ async function handleGrade() {
 
   els.gradeBtn.disabled = true;
   els.gradeBtn.textContent = "Grading";
+  const answeredQuestionIds = Array.from(new Set([...state.answeredQuestionIds, state.currentQuestion.id]));
 
   try {
     const payload = await api("/api/answer/grade", {
@@ -686,11 +690,13 @@ async function handleGrade() {
         sessionId: state.sessionId,
         questionId: state.currentQuestion.id,
         answerText,
-        mastery: state.mastery
+        mastery: state.mastery,
+        answeredQuestionIds
       })
     });
 
     state.mastery = payload.mastery;
+    state.answeredQuestionIds = answeredQuestionIds;
     state.pendingNextQuestion = payload.nextQuestion;
     renderFeedback(payload);
     renderMastery();
@@ -722,13 +728,21 @@ function fillSampleAnswer() {
       "Particles move randomly and move faster when warm, so diffusion is faster. Mg2+ and Cl- form MgCl2 because two Cl- ions balance one Mg2+. This is neutralisation, forming sodium chloride and water.",
     sec1_lab_001:
       "Use a pipette because it measures a fixed 25.0 cm3 volume more accurately than a beaker or measuring cylinder.",
+    sec1_lab_002:
+      "Use a pipette because it is calibrated to deliver a fixed 25.0 cm3 volume accurately. It is more accurate than a beaker or measuring cylinder.",
     sec1_particles_001:
       "Smell particles move randomly. In a warm room they have more kinetic energy and move faster, so diffusion is faster.",
+    sec1_particles_002:
+      "Perfume particles move randomly. In a warm classroom they have more kinetic energy and move faster, so they diffuse faster.",
+    sec1_particles_003:
+      "In a cold room the particles have less kinetic energy and move more slowly, so diffusion is slower.",
     sec1_bonding_001:
       "MgCl2. One Mg2+ ion needs two Cl- ions to make the total charge zero. This is ionic bonding.",
     sec1_equations_001: "2Mg + O2 -> 2MgO",
     sec1_acid_base_001:
       "This is neutralisation. Hydrochloric acid + sodium hydroxide -> sodium chloride + water.",
+    sec1_acid_base_002:
+      "This is neutralisation. Hydrochloric acid reacts with potassium hydroxide to form potassium chloride and water.",
     sec1_observation_001:
       "Bubbles forming and magnesium disappearing are observations. The gas is hydrogen. A lighted splint gives a squeaky pop.",
     sec2_diag_001:
@@ -739,10 +753,14 @@ function fillSampleAnswer() {
       "Warm the acid, add excess copper(II) oxide until no more reacts, filter off excess solid, evaporate the filtrate, crystallise, then dry the crystals. Excess solid ensures all acid has reacted.",
     sec2_redox_001:
       "The brown solid is copper. Zinc is oxidised to Zn2+ and Cu2+ is reduced to copper metal, so this is redox.",
+    sec2_redox_002:
+      "The brown coating is copper. Zinc is oxidised to Zn2+ and Cu2+ ions are reduced to copper metal.",
     sec2_oxidation_states_001:
       "Iron is reduced from +3 in Fe2O3 to 0 in Fe. Carbon is oxidised from +2 in CO to +4 in CO2.",
     sec2_titration_001:
       "A burette is used because it accurately delivers variable volumes and lets the titre be read. The endpoint is the indicator colour change. Swirling mixes the solutions evenly.",
+    sec2_titration_002:
+      "Use a pipette for the fixed 25.0 cm3 sodium hydroxide. Use a burette for the acid because it accurately delivers variable volumes and lets the titre be read.",
     sec2_titre_calc_001:
       "Moles NaOH = 0.100 x 25.0/1000 = 0.00250 mol. The ratio is 1:1, so moles HCl = 0.00250 mol. Concentration HCl = 0.00250/0.0200 = 0.125 mol/dm3.",
     sec2_qa_001:
@@ -752,7 +770,10 @@ function fillSampleAnswer() {
       "The cloudy white solid is the precipitate. It shows an insoluble product formed.",
     ppt_agcl_001:
       "Observation: white precipitate forms. AgNO3(aq) + NaCl(aq) -> AgCl(s) + NaNO3(aq). Net ionic: Ag+(aq) + Cl-(aq) -> AgCl(s).",
+    ppt_agcl_002:
+      "A white precipitate forms. The precipitate is AgCl(s). Net ionic: Ag+(aq) + Cl-(aq) -> AgCl(s).",
     ppt_solubility_001: "Yes, a precipitate forms. It is BaSO4(s), barium sulfate.",
+    ppt_solubility_002: "A precipitate forms. It is barium sulfate, BaSO4(s).",
     ppt_formulae_001: "PbI2(s), because Pb2+ needs two I- ions to balance the charge.",
     ppt_balance_001: "Pb(NO3)2(aq) + 2KI(aq) -> PbI2(s) + 2KNO3(aq)",
     ppt_states_001: "CaCl2(aq) + Na2CO3(aq) -> CaCO3(s) + 2NaCl(aq)",
