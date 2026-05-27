@@ -196,7 +196,23 @@ npx wrangler secret put OPENAI_API_KEY --env production
 
 You can also set these secrets in the Cloudflare dashboard for each Worker environment.
 
-## 6. D1 Persistence, Later
+## 6. Private School Materials
+
+Keep raw school PDFs outside the repository, such as:
+
+```text
+/Users/zhuk/Documents/Codex/nush-materials
+```
+
+The materials indexing script is local-only by default:
+
+```bash
+/Users/zhuk/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/index_nush_materials.py --materials-dir /Users/zhuk/Documents/Codex/nush-materials
+```
+
+It writes ignored files under `data/`, so they are not pushed to GitHub or deployed to Cloudflare. `--use-openai` is an explicit opt-in that sends sampled page images to OpenAI Vision. `--write-public-js` is a second explicit opt-in for writing derived summaries into deployable source code.
+
+## 7. D1 Persistence, Later
 
 The MVP works without D1. When ready:
 

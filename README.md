@@ -64,6 +64,30 @@ npm run deploy:staging
 npm run deploy:production
 ```
 
+## Private Materials Indexing
+
+School materials should stay outside this repository, for example:
+
+```text
+/Users/zhuk/Documents/Codex/nush-materials
+```
+
+Create a local-only manifest without network access:
+
+```bash
+/Users/zhuk/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/index_nush_materials.py --materials-dir /Users/zhuk/Documents/Codex/nush-materials
+```
+
+This writes `data/materials-local-index.json`, which is ignored by git and is not deployed. It only records metadata such as PDF names, page counts, and sampled page numbers.
+
+Only with explicit consent, allow OpenAI Vision OCR:
+
+```bash
+/Users/zhuk/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/index_nush_materials.py --materials-dir /Users/zhuk/Documents/Codex/nush-materials --use-openai
+```
+
+Do not add `--write-public-js` unless the extracted summaries are safe to commit and deploy.
+
 ## Cloudflare Secrets
 
 Set secrets once per environment:

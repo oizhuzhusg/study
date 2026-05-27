@@ -233,7 +233,7 @@ function cleanGeneratedText(value, maxLength) {
     .slice(0, maxLength);
 }
 
-export async function generateQuestionVariant(env, { topic, skill, referenceQuestion, answeredPrompts = [] }) {
+export async function generateQuestionVariant(env, { topic, skill, referenceQuestion, answeredPrompts = [], materialContext = "" }) {
   if (!hasOpenAIKey(env)) {
     throw new Error("OPENAI_API_KEY is required for AI question generation.");
   }
@@ -254,8 +254,9 @@ export async function generateQuestionVariant(env, { topic, skill, referenceQues
     `Reference prompt: ${referenceQuestion.prompt}`,
     `Reference expected answer: ${referenceQuestion.expectedAnswer}`,
     `Rubric to preserve: ${JSON.stringify(referenceQuestion.rubric)}`,
+    materialContext ? `Relevant NUSH school material context:\n${materialContext}` : "",
     `Recently used prompts to avoid: ${JSON.stringify(answeredPrompts.slice(-8))}`
-  ].join("\n");
+  ].filter(Boolean).join("\n");
 
   const result = await callOpenAIJson(
     env,

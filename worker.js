@@ -1,5 +1,6 @@
 import { defaultMastery, lessons, skills, topics } from "./src/shared/topics.js";
 import { firstQuestionForSkill, firstQuestionForTopic, getQuestion, nextQuestionForWeakSkills, normalizeTopicId, questions } from "./src/shared/questions.js";
+import { materialContextForSkills, materialIndex } from "./src/shared/materials-index.js";
 import { applyMasteryUpdates, gradeAnswerFallback, gradeWithRules } from "./src/worker/grading.js";
 import { generateQuestionVariant, gradeAnswerWithOpenAI, transcribeAnswerPhoto } from "./src/worker/openai.js";
 import { APP_VERSION } from "./public/version.js";
@@ -177,7 +178,8 @@ async function maybeGenerateNextQuestion(env, question, grade, body, answeredQue
     topic: target.topic,
     skill: target.skill,
     referenceQuestion: target.referenceQuestion,
-    answeredPrompts: answeredPromptsFor(question.topicId, answeredQuestionIds)
+    answeredPrompts: answeredPromptsFor(question.topicId, answeredQuestionIds),
+    materialContext: materialContextForSkills([target.skill.id], target.topic.id)
   });
 
   return {
@@ -239,7 +241,9 @@ async function routeApi(request, env, ctx) {
       openaiModel: env.OPENAI_MODEL || "gpt-4.1-nano",
       openaiTranscribeModel: env.OPENAI_TRANSCRIBE_MODEL || env.OPENAI_VISION_MODEL || env.OPENAI_MODEL || "gpt-4.1-mini",
       openaiGradingModel: env.OPENAI_GRADING_MODEL || env.OPENAI_MODEL || "gpt-4.1-nano",
-      openaiGenerationModel: env.OPENAI_GENERATION_MODEL || env.OPENAI_GRADING_MODEL || env.OPENAI_MODEL || "gpt-4.1-nano"
+      openaiGenerationModel: env.OPENAI_GENERATION_MODEL || env.OPENAI_GRADING_MODEL || env.OPENAI_MODEL || "gpt-4.1-nano",
+      materialDocuments: materialIndex.documents.length,
+      materialGeneratedAt: materialIndex.generatedAt
     });
   }
 
@@ -317,7 +321,8 @@ async function routeApi(request, env, ctx) {
         topic,
         skill,
         referenceQuestion,
-        answeredPrompts: body.answeredPrompts ?? []
+        answeredPrompts: body.answeredPrompts ?? [],
+        materialContext: materialContextForSkills([skill.id], topic.id)
       });
       return json({
         question: publicQuestion({
