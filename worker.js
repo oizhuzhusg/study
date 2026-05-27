@@ -1,7 +1,7 @@
 import { defaultMastery, lessons, skills, topics } from "./src/shared/topics.js";
 import { firstQuestionForSkill, firstQuestionForTopic, getQuestion, nextQuestionForWeakSkills, normalizeTopicId, questions } from "./src/shared/questions.js";
-import { applyMasteryUpdates, gradeAnswerFallback } from "./src/worker/grading.js";
-import { gradeAnswerWithOpenAI, transcribeAnswerPhoto } from "./src/worker/openai.js";
+import { applyMasteryUpdates, gradeAnswerFallback, gradeWithRules } from "./src/worker/grading.js";
+import { generateQuestionVariant, gradeAnswerWithOpenAI, transcribeAnswerPhoto } from "./src/worker/openai.js";
 import { APP_VERSION } from "./public/version.js";
 
 const JSON_HEADERS = {
@@ -32,7 +32,7 @@ function publicQuestion(question) {
   if (!question) {
     return null;
   }
-  return {
+  const base = {
     id: question.id,
     topicId: question.topicId,
     type: question.type,
@@ -41,6 +41,154 @@ function publicQuestion(question) {
     prompt: question.prompt,
     focusSkills: question.focusSkills,
     rubricCount: question.rubric.length
+  };
+  if (!question.generated) {
+    return base;
+  }
+  return {
+    ...base,
+    generated: true,
+    referenceQuestionId: question.referenceQuestionId,
+    expectedAnswer: question.expectedAnswer,
+    rubric: question.rubric
+  };
+}
+
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function normalizeGeneratedQuestion(raw) {
+  if (!isPlainObject(raw) || raw.generated !== true) {
+    return null;
+  }
+  const referenceQuestion = getQuestion(raw.referenceQuestionId);
+  if (!referenceQuestion) {
+    return null;
+  }
+  if (typeof raw.id !== "string" || !raw.id.startsWith("gen_")) {
+    return null;
+  }
+  if (raw.topicId !== referenceQuestion.topicId) {
+    return null;
+  }
+  const title = String(raw.title ?? "").trim().slice(0, 80);
+  const prompt = String(raw.prompt ?? "").trim().slice(0, 1400);
+  const expectedAnswer = String(raw.expectedAnswer ?? "").trim().slice(0, 1200);
+  if (!title || !prompt || !expectedAnswer) {
+    return null;
+  }
+  return {
+    ...referenceQuestion,
+    id: raw.id,
+    type: `${referenceQuestion.type}_generated`,
+    title,
+    prompt,
+    expectedAnswer,
+    generated: true,
+    referenceQuestionId: referenceQuestion.id
+  };
+}
+
+function resolveQuestionFromBody(body) {
+  const staticQuestion = getQuestion(body.questionId);
+  if (staticQuestion) {
+    return staticQuestion;
+  }
+  const generatedQuestion = normalizeGeneratedQuestion(body.generatedQuestion);
+  if (generatedQuestion && generatedQuestion.id === body.questionId) {
+    return generatedQuestion;
+  }
+  return null;
+}
+
+function questionMatchesAnySkill(question, skillIds) {
+  return skillIds.some((skillId) => question.focusSkills.includes(skillId));
+}
+
+function hasUnansweredStaticQuestion(topicId, skillIds, answeredQuestionIds, options = {}) {
+  const answeredSet = new Set(answeredQuestionIds.filter(Boolean));
+  return questions.some(
+    (question) =>
+      question.topicId === topicId &&
+      !answeredSet.has(question.id) &&
+      (options.includeDiagnostic !== false || question.difficulty !== "diagnostic") &&
+      (!skillIds.length || questionMatchesAnySkill(question, skillIds))
+  );
+}
+
+function firstReferenceQuestion(topicId, skillId, fallbackQuestion) {
+  return (
+    questions.find(
+      (question) => question.topicId === topicId && question.difficulty !== "diagnostic" && question.focusSkills.includes(skillId)
+    ) ??
+    questions.find((question) => question.topicId === topicId && question.focusSkills.includes(skillId)) ??
+    questions.find((question) => question.topicId === topicId && question.id === fallbackQuestion.referenceQuestionId) ??
+    getQuestion(fallbackQuestion.referenceQuestionId) ??
+    fallbackQuestion
+  );
+}
+
+function generationTarget(question, weakSkills, selectedSkillId, answeredQuestionIds) {
+  const topic = topics.find((item) => item.id === question.topicId);
+  if (!topic) {
+    return null;
+  }
+  const topicSkillIds = new Set(topic.skillIds);
+  const prioritySkills = [...(weakSkills ?? []), selectedSkillId, ...(question.focusSkills ?? [])].filter(
+    (skillId, index, all) => skillId && topicSkillIds.has(skillId) && all.indexOf(skillId) === index
+  );
+
+  for (const skillId of prioritySkills) {
+    if (!hasUnansweredStaticQuestion(question.topicId, [skillId], answeredQuestionIds, { includeDiagnostic: false })) {
+      return {
+        topic,
+        skill: skills.find((item) => item.id === skillId),
+        referenceQuestion: firstReferenceQuestion(question.topicId, skillId, question)
+      };
+    }
+  }
+
+  if (!hasUnansweredStaticQuestion(question.topicId, [], answeredQuestionIds)) {
+    const skillId = prioritySkills[0] ?? topic.skillIds[0];
+    return {
+      topic,
+      skill: skills.find((item) => item.id === skillId),
+      referenceQuestion: firstReferenceQuestion(question.topicId, skillId, question)
+    };
+  }
+
+  return null;
+}
+
+function answeredPromptsFor(topicId, answeredQuestionIds) {
+  const answeredSet = new Set(answeredQuestionIds.filter(Boolean));
+  return questions.filter((question) => question.topicId === topicId && answeredSet.has(question.id)).map((question) => question.prompt);
+}
+
+async function maybeGenerateNextQuestion(env, question, grade, body, answeredQuestionIds) {
+  const selectedSkillId = typeof body.selectedSkillId === "string" ? body.selectedSkillId : null;
+  const target = generationTarget(question, grade.weak_skills, selectedSkillId, answeredQuestionIds);
+  if (!target?.skill || !target.referenceQuestion) {
+    return null;
+  }
+
+  const variant = await generateQuestionVariant(env, {
+    topic: target.topic,
+    skill: target.skill,
+    referenceQuestion: target.referenceQuestion,
+    answeredPrompts: answeredPromptsFor(question.topicId, answeredQuestionIds)
+  });
+
+  return {
+    ...target.referenceQuestion,
+    id: `gen_${target.referenceQuestion.id}_${crypto.randomUUID()}`,
+    type: `${target.referenceQuestion.type}_generated`,
+    title: variant.title,
+    prompt: variant.prompt,
+    expectedAnswer: variant.expectedAnswer,
+    generated: true,
+    referenceQuestionId: target.referenceQuestion.id
   };
 }
 
@@ -90,7 +238,8 @@ async function routeApi(request, env, ctx) {
       openaiConfigured: Boolean(env.OPENAI_API_KEY),
       openaiModel: env.OPENAI_MODEL || "gpt-4.1-nano",
       openaiTranscribeModel: env.OPENAI_TRANSCRIBE_MODEL || env.OPENAI_VISION_MODEL || env.OPENAI_MODEL || "gpt-4.1-mini",
-      openaiGradingModel: env.OPENAI_GRADING_MODEL || env.OPENAI_MODEL || "gpt-4.1-nano"
+      openaiGradingModel: env.OPENAI_GRADING_MODEL || env.OPENAI_MODEL || "gpt-4.1-nano",
+      openaiGenerationModel: env.OPENAI_GENERATION_MODEL || env.OPENAI_GRADING_MODEL || env.OPENAI_MODEL || "gpt-4.1-nano"
     });
   }
 
@@ -150,9 +299,52 @@ async function routeApi(request, env, ctx) {
     return json({ question: publicQuestion(next) });
   }
 
+  if (url.pathname === "/api/question/generate" && request.method === "POST") {
+    const body = await readJson(request);
+    const referenceQuestion = getQuestion(body.referenceQuestionId) ?? getQuestion(body.questionId);
+    if (!referenceQuestion) {
+      return json({ error: "A valid reference question is required." }, 400);
+    }
+    const topic = topics.find((item) => item.id === referenceQuestion.topicId);
+    const skillId = typeof body.skillId === "string" ? body.skillId : referenceQuestion.focusSkills[0];
+    const skill = skills.find((item) => item.id === skillId && topic?.skillIds.includes(item.id));
+    if (!topic || !skill) {
+      return json({ error: "A valid topic skill is required." }, 400);
+    }
+
+    try {
+      const variant = await generateQuestionVariant(env, {
+        topic,
+        skill,
+        referenceQuestion,
+        answeredPrompts: body.answeredPrompts ?? []
+      });
+      return json({
+        question: publicQuestion({
+          ...referenceQuestion,
+          id: `gen_${referenceQuestion.id}_${crypto.randomUUID()}`,
+          type: `${referenceQuestion.type}_generated`,
+          title: variant.title,
+          prompt: variant.prompt,
+          expectedAnswer: variant.expectedAnswer,
+          generated: true,
+          referenceQuestionId: referenceQuestion.id
+        })
+      });
+    } catch (error) {
+      return json(
+        {
+          error: "Question generation failed.",
+          detail: error instanceof Error ? error.message : String(error)
+        },
+        502
+      );
+    }
+  }
+
   if (url.pathname === "/api/answer/transcribe-photo" && request.method === "POST") {
     const body = await readJson(request);
-    const question = getQuestion(body.questionId);
+    const question = resolveQuestionFromBody(body);
     if (!question) {
       return json({ error: `Unknown question: ${body.questionId}` }, 400);
     }
@@ -178,7 +370,7 @@ async function routeApi(request, env, ctx) {
 
   if (url.pathname === "/api/answer/grade" && request.method === "POST") {
     const body = await readJson(request);
-    const question = getQuestion(body.questionId);
+    const question = resolveQuestionFromBody(body);
     if (!question) {
       return json({ error: `Unknown question: ${body.questionId}` }, 400);
     }
@@ -197,14 +389,23 @@ async function routeApi(request, env, ctx) {
       grade = await gradeAnswerWithOpenAI(env, question, body.answerText, gradeOptions);
     } catch (error) {
       warning = error instanceof Error ? error.message : String(error);
-      grade = gradeAnswerFallback(question.id, body.answerText, gradeOptions);
+      grade = question.generated
+        ? gradeWithRules(question, body.answerText, gradeOptions)
+        : gradeAnswerFallback(question.id, body.answerText, gradeOptions);
     }
 
     const currentMastery = body.mastery && typeof body.mastery === "object" ? body.mastery : defaultMastery();
     const updatedMastery = applyMasteryUpdates(currentMastery, grade.mastery_updates);
-    const nextQuestion =
+    let nextQuestion =
       getQuestion(grade.next_question_id) ??
       nextQuestionForWeakSkills(grade.weak_skills, question.id, question.topicId, answeredQuestionIds);
+    try {
+      nextQuestion = (await maybeGenerateNextQuestion(env, question, grade, body, answeredQuestionIds)) ?? nextQuestion;
+    } catch (error) {
+      if (new Set(answeredQuestionIds).has(nextQuestion.id)) {
+        warning = warning ?? (error instanceof Error ? error.message : String(error));
+      }
+    }
 
     ctx.waitUntil(
       maybeSaveAttempt(env, {

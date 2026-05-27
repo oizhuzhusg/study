@@ -1,4 +1,4 @@
-import { APP_VERSION } from "/version.js?v=2026.05.26.1";
+import { APP_VERSION } from "/version.js?v=2026.05.27.1";
 
 const state = {
   profile: null,
@@ -86,6 +86,25 @@ function normalizeVersion(version) {
 
 function normalizeTopicId(topicId) {
   return topicId === "precipitation_reactions" ? "sec2_chemistry_ii" : topicId;
+}
+
+function generatedQuestionForApi(question) {
+  if (!question?.generated) {
+    return null;
+  }
+  return {
+    id: question.id,
+    generated: true,
+    topicId: question.topicId,
+    type: question.type,
+    difficulty: question.difficulty,
+    title: question.title,
+    prompt: question.prompt,
+    expectedAnswer: question.expectedAnswer,
+    referenceQuestionId: question.referenceQuestionId,
+    focusSkills: question.focusSkills,
+    rubric: question.rubric
+  };
 }
 
 function renderUpdateBanner(version) {
@@ -440,7 +459,7 @@ function renderQuestion() {
 
   els.questionTitle.textContent = question.title;
   els.questionPrompt.textContent = question.prompt;
-  els.difficultyTag.textContent = question.difficulty;
+  els.difficultyTag.textContent = question.generated ? `AI ${question.difficulty}` : question.difficulty;
   els.answerInput.value = "";
   els.feedbackBox.classList.add("hidden");
   els.transcriptionBox.classList.add("hidden");
@@ -654,6 +673,7 @@ async function handlePhotoUpload(event) {
       method: "POST",
       body: JSON.stringify({
         questionId: state.currentQuestion.id,
+        generatedQuestion: generatedQuestionForApi(state.currentQuestion),
         imageDataUrl
       })
     });
@@ -691,7 +711,9 @@ async function handleGrade() {
         questionId: state.currentQuestion.id,
         answerText,
         mastery: state.mastery,
-        answeredQuestionIds
+        answeredQuestionIds,
+        selectedSkillId: state.selectedSkillId,
+        generatedQuestion: generatedQuestionForApi(state.currentQuestion)
       })
     });
 
@@ -723,6 +745,12 @@ function handleNextQuestion() {
 }
 
 function fillSampleAnswer() {
+  if (state.currentQuestion?.generated && state.currentQuestion.expectedAnswer) {
+    els.answerInput.value = state.currentQuestion.expectedAnswer;
+    els.answerInput.focus();
+    return;
+  }
+
   const samples = {
     sec1_diag_001:
       "Particles move randomly and move faster when warm, so diffusion is faster. Mg2+ and Cl- form MgCl2 because two Cl- ions balance one Mg2+. This is neutralisation, forming sodium chloride and water.",

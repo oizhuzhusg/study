@@ -43,6 +43,17 @@ const gradeSchema = {
   required: ["rubric_results", "misconceptions", "feedback_to_student"]
 };
 
+const generatedQuestionSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    title: { type: "string" },
+    prompt: { type: "string" },
+    expected_answer: { type: "string" }
+  },
+  required: ["title", "prompt", "expected_answer"]
+};
+
 function hasOpenAIKey(env) {
   return typeof env.OPENAI_API_KEY === "string" && env.OPENAI_API_KEY.startsWith("sk-");
 }
@@ -211,5 +222,65 @@ export async function gradeAnswerWithOpenAI(env, question, answerText, options =
     misconceptions: finalGrade.misconceptions,
     feedback_to_student: finalGrade.feedback_to_student,
     source: "openai_validated"
+  };
+}
+
+function cleanGeneratedText(value, maxLength) {
+  return String(value ?? "")
+    .replace(/\s+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim()
+    .slice(0, maxLength);
+}
+
+export async function generateQuestionVariant(env, { topic, skill, referenceQuestion, answeredPrompts = [] }) {
+  if (!hasOpenAIKey(env)) {
+    throw new Error("OPENAI_API_KEY is required for AI question generation.");
+  }
+
+  const prompt = [
+    "You are creating one controlled Chemistry practice question for a NUSH Year 2 student.",
+    "Generate a fresh variant of the reference question. Keep the same chemistry skill, difficulty, expected answer style, and rubric coverage.",
+    "Do not introduce syllabus topics outside the given topic and skill.",
+    "Do not reveal the answer inside the question prompt.",
+    "Use plain text only. Avoid markdown tables.",
+    "Return only JSON matching the schema.",
+    "",
+    `Topic: ${topic.title}`,
+    `Topic summary: ${topic.summary}`,
+    `Skill: ${skill.label} - ${skill.description}`,
+    `Difficulty: ${referenceQuestion.difficulty}`,
+    `Reference title: ${referenceQuestion.title}`,
+    `Reference prompt: ${referenceQuestion.prompt}`,
+    `Reference expected answer: ${referenceQuestion.expectedAnswer}`,
+    `Rubric to preserve: ${JSON.stringify(referenceQuestion.rubric)}`,
+    `Recently used prompts to avoid: ${JSON.stringify(answeredPrompts.slice(-8))}`
+  ].join("\n");
+
+  const result = await callOpenAIJson(
+    env,
+    "chemistry_question_variant",
+    generatedQuestionSchema,
+    [
+      {
+        role: "user",
+        content: [{ type: "input_text", text: prompt }]
+      }
+    ],
+    1000,
+    env.OPENAI_GENERATION_MODEL || env.OPENAI_GRADING_MODEL || env.OPENAI_MODEL || "gpt-4.1-nano"
+  );
+
+  const title = cleanGeneratedText(result.title, 80);
+  const questionPrompt = cleanGeneratedText(result.prompt, 1400);
+  const expectedAnswer = cleanGeneratedText(result.expected_answer, 1200);
+  if (!title || !questionPrompt || !expectedAnswer) {
+    throw new Error("OpenAI generated an incomplete question.");
+  }
+
+  return {
+    title,
+    prompt: questionPrompt,
+    expectedAnswer
   };
 }
