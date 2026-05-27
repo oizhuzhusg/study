@@ -80,13 +80,32 @@ Create a local-only manifest without network access:
 
 This writes `data/materials-local-index.json`, which is ignored by git and is not deployed. It only records metadata such as PDF names, page counts, and sampled page numbers.
 
+Run local OCR only with the project OCR virtual environment:
+
+```bash
+.venv-ocr/bin/python scripts/index_nush_materials.py --materials-dir /Users/zhuk/Documents/Codex/nush-materials --local-ocr rapidocr
+```
+
+This still does not call OpenAI or the network. It writes extracted page images to `data/materials-page-images/`, OCR text to `data/materials-ocr-text/`, and the private index to `data/materials-local-index.json`. The entire `data/` folder is ignored by git.
+
+The default samples 3 pages per PDF for quick indexing. For a full local OCR pass, increase the sample size, for example `--pages-per-pdf 999`.
+
+The deployed app uses only the derived, publishable material index in `src/shared/materials-index.js`. That file contains high-level topic summaries, question patterns, common traps, and skill links; it does not contain raw OCR text or page images.
+
+If the OCR virtual environment needs to be recreated:
+
+```bash
+/Users/zhuk/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -m venv .venv-ocr
+.venv-ocr/bin/python -m pip install rapidocr-onnxruntime pypdf
+```
+
 Only with explicit consent, allow OpenAI Vision OCR:
 
 ```bash
 /Users/zhuk/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/index_nush_materials.py --materials-dir /Users/zhuk/Documents/Codex/nush-materials --use-openai
 ```
 
-Do not add `--write-public-js` unless the extracted summaries are safe to commit and deploy.
+Do not add `--write-public-js` unless the extracted summaries are safe to commit and deploy. The script blocks `--write-public-js` for local-only and local OCR modes so private school material is not accidentally committed.
 
 ## Cloudflare Secrets
 

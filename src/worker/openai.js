@@ -49,9 +49,23 @@ const generatedQuestionSchema = {
   properties: {
     title: { type: "string" },
     prompt: { type: "string" },
-    expected_answer: { type: "string" }
+    expected_answer: { type: "string" },
+    rubric: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          id: { type: "string" },
+          skill: { type: "string" },
+          points: { type: "integer" },
+          criterion: { type: "string" }
+        },
+        required: ["id", "skill", "points", "criterion"]
+      }
+    }
   },
-  required: ["title", "prompt", "expected_answer"]
+  required: ["title", "prompt", "expected_answer", "rubric"]
 };
 
 function hasOpenAIKey(env) {
@@ -233,17 +247,70 @@ function cleanGeneratedText(value, maxLength) {
     .slice(0, maxLength);
 }
 
+function uniqueStrings(values) {
+  return Array.from(new Set(values.filter((value) => typeof value === "string" && value.trim()).map((value) => value.trim())));
+}
+
+function cleanGeneratedRubric(rawRubric, referenceQuestion) {
+  const fallbackRubric = referenceQuestion.rubric ?? [];
+  if (!Array.isArray(rawRubric)) {
+    return fallbackRubric;
+  }
+  const fallbackSkills = uniqueStrings([
+    ...(referenceQuestion.focusSkills ?? []),
+    ...fallbackRubric.map((item) => item.skill)
+  ]);
+  const rubric = rawRubric
+    .slice(0, 8)
+    .map((item, index) => {
+      const fallback = fallbackRubric[index] ?? fallbackRubric[0] ?? {};
+      const criterion = cleanGeneratedText(item?.criterion, 180);
+      if (!criterion) {
+        return null;
+      }
+      const points = Number.isInteger(item?.points) && item.points > 0 && item.points <= 5 ? item.points : fallback.points || 1;
+      const skill = fallbackSkills.includes(item?.skill) ? item.skill : fallback.skill || fallbackSkills[0] || "explanation_quality";
+      const id = cleanGeneratedText(item?.id || fallback.id || `generated_${index + 1}`, 48)
+        .toLowerCase()
+        .replace(/[^a-z0-9_]+/g, "_")
+        .replace(/^_+|_+$/g, "");
+      return {
+        id: id || `generated_${index + 1}`,
+        skill,
+        points,
+        criterion
+      };
+    })
+    .filter(Boolean);
+  return rubric.length ? rubric : fallbackRubric;
+}
+
 export async function generateQuestionVariant(env, { topic, skill, referenceQuestion, answeredPrompts = [], materialContext = "" }) {
   if (!hasOpenAIKey(env)) {
     throw new Error("OPENAI_API_KEY is required for AI question generation.");
   }
+  const allowedRubricSkills = uniqueStrings([
+    skill.id,
+    ...(referenceQuestion.focusSkills ?? []),
+    ...(referenceQuestion.rubric ?? []).map((item) => item.skill)
+  ]);
 
   const prompt = [
-    "You are creating one controlled Chemistry practice question for a NUSH Year 2 student.",
+    "You are creating one controlled Chemistry practice question for a NUSH Year 1 or Year 2 student.",
     "Generate a fresh variant of the reference question. Keep the same chemistry skill, difficulty, expected answer style, and rubric coverage.",
+    "When local OCR-derived exam-style guidance is provided, use it as the main question-pattern blueprint.",
+    "The new question should feel like a NUSH worksheet or revision question: precise command words, school-style units, realistic data, and multi-part scaffolding when appropriate.",
+    "Do not copy or closely paraphrase school material wording. Create an analogous question by changing chemicals, values, context, labels, or scenario.",
     "Do not introduce syllabus topics outside the given topic and skill.",
     "Do not reveal the answer inside the question prompt.",
-    "Use plain text only. Avoid markdown tables.",
+    "For calculation questions, include enough given data and make the expected answer show the main working steps and units.",
+    "If an equation is provided in the prompt, it must be fully balanced and consistent with the expected answer and rubric.",
+    "If balancing is part of the task, ask the student to write the balanced equation instead of showing an unbalanced one as if it were given.",
+    "For explanation questions, make the expected answer show the explicit chemistry link, such as structure to property, particle motion to rate, or observation to inference.",
+    "Return a rubric that matches the new question exactly. Update chemical names, numbers, mole ratios, observations, and final answers in the rubric criteria.",
+    "Do not reuse old rubric criteria if the new question changes the chemistry or calculation.",
+    "Keep the rubric total points close to the reference total, and use only the allowed rubric skill ids.",
+    "Use plain ASCII text for formulae and units, such as H2SO4, cm3, mol/dm3, and ->. Avoid markdown tables.",
     "Return only JSON matching the schema.",
     "",
     `Topic: ${topic.title}`,
@@ -254,6 +321,7 @@ export async function generateQuestionVariant(env, { topic, skill, referenceQues
     `Reference prompt: ${referenceQuestion.prompt}`,
     `Reference expected answer: ${referenceQuestion.expectedAnswer}`,
     `Rubric to preserve: ${JSON.stringify(referenceQuestion.rubric)}`,
+    `Allowed rubric skills: ${JSON.stringify(allowedRubricSkills)}`,
     materialContext ? `Relevant NUSH school material context:\n${materialContext}` : "",
     `Recently used prompts to avoid: ${JSON.stringify(answeredPrompts.slice(-8))}`
   ].filter(Boolean).join("\n");
@@ -275,6 +343,7 @@ export async function generateQuestionVariant(env, { topic, skill, referenceQues
   const title = cleanGeneratedText(result.title, 80);
   const questionPrompt = cleanGeneratedText(result.prompt, 1400);
   const expectedAnswer = cleanGeneratedText(result.expected_answer, 1200);
+  const rubric = cleanGeneratedRubric(result.rubric, referenceQuestion);
   if (!title || !questionPrompt || !expectedAnswer) {
     throw new Error("OpenAI generated an incomplete question.");
   }
@@ -282,6 +351,7 @@ export async function generateQuestionVariant(env, { topic, skill, referenceQues
   return {
     title,
     prompt: questionPrompt,
-    expectedAnswer
+    expectedAnswer,
+    rubric
   };
 }

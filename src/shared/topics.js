@@ -1,5 +1,20 @@
 export const skills = [
   {
+    id: "scientific_inquiry",
+    label: "Scientific inquiry",
+    description: "Asks testable questions, identifies variables, and supports conclusions with evidence."
+  },
+  {
+    id: "lab_safety",
+    label: "Lab safety",
+    description: "Chooses safe actions for smelling, heating, handling spills, and using chemicals."
+  },
+  {
+    id: "measurement_apparatus",
+    label: "Measurement apparatus",
+    description: "Chooses pipettes, burettes, measuring cylinders, and other apparatus by purpose and accuracy."
+  },
+  {
     id: "experimental_chemistry",
     label: "Experimental chemistry",
     description: "Uses apparatus, measurements, variables, and observations correctly."
@@ -10,9 +25,39 @@ export const skills = [
     description: "Explains states, diffusion, and temperature using particle movement."
   },
   {
+    id: "elements_periodic_table",
+    label: "Elements and periodic table",
+    description: "Uses element symbols, metal/non-metal ideas, and periodic table position."
+  },
+  {
+    id: "substances_mixtures",
+    label: "Substances and mixtures",
+    description: "Distinguishes elements, compounds, mixtures, and physical versus chemical changes."
+  },
+  {
+    id: "separation_methods",
+    label: "Separation methods",
+    description: "Chooses filtration, evaporation, crystallisation, distillation, or chromatography from mixture properties."
+  },
+  {
+    id: "atomic_structure",
+    label: "Atomic structure",
+    description: "Uses protons, neutrons, electrons, isotopes, and electronic structure correctly."
+  },
+  {
     id: "ions_charges",
     label: "Ions and charges",
     description: "Connects ion charges to stable compound ratios."
+  },
+  {
+    id: "ionic_bonding",
+    label: "Ionic bonding",
+    description: "Explains ionic bonding by electron transfer and attraction between oppositely charged ions."
+  },
+  {
+    id: "covalent_bonding",
+    label: "Covalent bonding",
+    description: "Explains covalent bonding by electron sharing in simple molecular substances."
   },
   {
     id: "chemical_bonding",
@@ -33,6 +78,21 @@ export const skills = [
     id: "salt_preparation",
     label: "Salt preparation",
     description: "Chooses suitable methods and steps to prepare salts safely and cleanly."
+  },
+  {
+    id: "mole_concept",
+    label: "Mole concept",
+    description: "Converts between particles, moles, molar mass, and mass."
+  },
+  {
+    id: "chemical_calculation",
+    label: "Chemical calculation",
+    description: "Uses balanced equations and mole ratios for reacting mass, gas volume, limiting, and excess calculations."
+  },
+  {
+    id: "concentration_calculation",
+    label: "Concentration calculation",
+    description: "Calculates concentration in mol/dm3 or g/dm3 and converts cm3 to dm3 correctly."
   },
   {
     id: "redox_concepts",
@@ -58,6 +118,16 @@ export const skills = [
     id: "qualitative_analysis",
     label: "Qualitative analysis",
     description: "Uses chemical tests and observations to infer ions or gases present."
+  },
+  {
+    id: "metallic_bonding",
+    label: "Metallic bonding",
+    description: "Explains metallic structure, delocalised electrons, conductivity, malleability, and alloys."
+  },
+  {
+    id: "giant_covalent",
+    label: "Giant covalent structures",
+    description: "Explains diamond, graphite, graphene, silicon dioxide, and fullerenes using giant covalent bonding."
   },
   {
     id: "precipitate_concept",
@@ -119,23 +189,50 @@ export const topics = [
     status: "active",
     estimatedMinutes: 25,
     summary:
-      "Review the Sec 1 ideas that support Sec 2 Chemistry: lab skills, particle theory, bonding, formulae, equations, and acid-base basics.",
+      "Review NUSH Year 1 Chemistry foundations from the school materials: inquiry, lab work, particles, elements, mixtures, separation, atomic structure, bonding, formulae, equations, and acid-base basics.",
     objectives: [
-      "Use apparatus, observations, and measurements accurately.",
+      "Use inquiry skills, safety rules, apparatus, observations, and measurements accurately.",
       "Explain states and diffusion using kinetic theory of matter.",
-      "Use ion charges to write simple ionic formulae.",
-      "Balance simple chemical equations without changing formulae.",
-      "Recognise acids, alkalis, neutralisation, and basic gas tests."
+      "Classify elements, compounds, mixtures, and separation methods.",
+      "Use atomic structure, ion charges, and bonding to write formulae.",
+      "Recognise acids, alkalis, neutralisation, and simple equations."
+    ],
+    sections: [
+      {
+        title: "Inquiry and Laboratory",
+        skillIds: ["scientific_inquiry", "lab_safety", "measurement_apparatus", "experimental_chemistry", "observation_inference"]
+      },
+      {
+        title: "Particles and Substances",
+        skillIds: ["kinetic_theory", "elements_periodic_table", "substances_mixtures", "separation_methods"]
+      },
+      {
+        title: "Atomic Structure and Bonding",
+        skillIds: ["atomic_structure", "ions_charges", "ionic_bonding", "covalent_bonding", "chemical_bonding"]
+      },
+      {
+        title: "Formulae, Equations, and Acids",
+        skillIds: ["formulae", "balancing", "acid_base_basics", "explanation_quality", "sec1_gap_diagnosis"]
+      }
     ],
     skillIds: [
+      "scientific_inquiry",
+      "lab_safety",
+      "measurement_apparatus",
       "experimental_chemistry",
+      "observation_inference",
       "kinetic_theory",
+      "elements_periodic_table",
+      "substances_mixtures",
+      "separation_methods",
+      "atomic_structure",
       "ions_charges",
+      "ionic_bonding",
+      "covalent_bonding",
       "chemical_bonding",
       "formulae",
       "balancing",
       "acid_base_basics",
-      "observation_inference",
       "explanation_quality",
       "sec1_gap_diagnosis"
     ]
@@ -147,62 +244,69 @@ export const topics = [
     status: "active",
     estimatedMinutes: 40,
     summary:
-      "Build the main Sec 2 Chemistry II topics: precipitation, acid-base and salts, redox, volumetric analysis, and qualitative analysis.",
+      "Build NUSH Year 2 Chemistry from the school materials: acids and bases II, mole concept, chemical calculations, concentration, volumetric analysis, salt preparation, and extended bonding, while retaining precipitation and reaction analysis practice.",
     objectives: [
-      "Diagnose whether a reaction is precipitation, acid-base, or redox.",
-      "Write balanced molecular and net ionic equations where appropriate.",
-      "Use observations and tests to infer ions or gases.",
-      "Apply titration apparatus, endpoint, and titre reasoning.",
-      "Explain redox using electron transfer or oxidation state changes."
+      "Write balanced equations, ionic equations, and state symbols for acid-base and salt reactions.",
+      "Convert between particles, moles, mass, volume, and concentration.",
+      "Apply titration apparatus, endpoint, titre, and mole-ratio reasoning.",
+      "Choose salt preparation methods from solubility and reactant properties.",
+      "Explain metallic and giant covalent properties using bonding and structure."
     ],
     sections: [
       {
-        title: "Precipitation Reactions",
-        skillIds: [
-          "precipitate_concept",
-          "solubility_prediction",
-          "formulae",
-          "balancing",
-          "state_symbols",
-          "spectator_ions",
-          "ionic_equation",
-          "observation_inference"
-        ]
-      },
-      {
         title: "Acid-base and Salts",
-        skillIds: ["acid_base_reactions", "salt_preparation", "formulae", "balancing", "state_symbols"]
+        skillIds: ["acid_base_reactions", "salt_preparation", "formulae", "balancing", "state_symbols", "ionic_equation"]
       },
       {
-        title: "Redox",
-        skillIds: ["redox_concepts", "oxidation_states", "balancing", "explanation_quality"]
+        title: "Mole and Calculations",
+        skillIds: ["mole_concept", "chemical_calculation", "concentration_calculation", "titration_calculation"]
       },
       {
         title: "Volumetric Analysis",
-        skillIds: ["volumetric_analysis", "titration_calculation", "experimental_chemistry"]
+        skillIds: ["volumetric_analysis", "measurement_apparatus", "experimental_chemistry"]
       },
       {
-        title: "Qualitative Analysis",
-        skillIds: ["qualitative_analysis", "observation_inference", "explanation_quality"]
+        title: "Structure and Bonding",
+        skillIds: ["metallic_bonding", "giant_covalent", "chemical_bonding", "explanation_quality"]
+      },
+      {
+        title: "Precipitation and Reaction Analysis",
+        skillIds: [
+          "precipitate_concept",
+          "solubility_prediction",
+          "spectator_ions",
+          "ionic_equation",
+          "observation_inference",
+          "redox_concepts",
+          "oxidation_states",
+          "qualitative_analysis"
+        ]
       }
     ],
     skillIds: [
-      "precipitate_concept",
-      "solubility_prediction",
       "formulae",
       "balancing",
       "state_symbols",
-      "spectator_ions",
       "ionic_equation",
-      "observation_inference",
       "acid_base_reactions",
       "salt_preparation",
-      "redox_concepts",
-      "oxidation_states",
+      "mole_concept",
+      "chemical_calculation",
+      "concentration_calculation",
       "volumetric_analysis",
       "titration_calculation",
-      "qualitative_analysis",
+      "measurement_apparatus",
       "experimental_chemistry",
+      "metallic_bonding",
+      "giant_covalent",
+      "chemical_bonding",
+      "precipitate_concept",
+      "solubility_prediction",
+      "spectator_ions",
+      "observation_inference",
+      "redox_concepts",
+      "oxidation_states",
+      "qualitative_analysis",
       "explanation_quality"
     ]
   }
@@ -211,11 +315,11 @@ export const topics = [
 export const lessons = {
   sec1_foundations: {
     short:
-      "Sec 2 Chemistry becomes much easier when the Sec 1 foundations are secure: particles explain matter, ion charges explain formulae, and careful observations support chemical reasoning.",
+      "NUSH Year 1 Chemistry builds the grammar for later topics: inquiry and laboratory habits, particles, substances, separation, atoms, bonding, formulae, and acids.",
     example:
       "If a student writes MgCl instead of MgCl2, the real gap is usually not precipitation. It is the Sec 1 idea that Mg2+ needs two Cl- ions to make a neutral compound.",
     steps: [
-      "Identify whether the question is about particles, bonding, formulae, equations, acids, or lab observations.",
+      "Identify whether the question is about inquiry, lab work, particles, substances, separation, atoms, bonding, formulae, equations, or acids.",
       "State the foundation rule before trying to answer the Sec 2 question.",
       "Use charges or particles to justify the answer, not memorised words only.",
       "Check formulae first, then balance equations using coefficients.",
@@ -226,18 +330,18 @@ export const lessons = {
   },
   sec2_chemistry_ii: {
     short:
-      "Sec 2 Chemistry II connects reaction types to evidence: precipitates show insoluble products, acid-base reactions form salts, redox changes electron ownership, and practical analysis uses careful measurement and observation.",
+      "NUSH Year 2 Chemistry II connects reactions, calculations, and structure: acids and salts, moles, concentration, titration, salt preparation, metallic bonding, and giant covalent structures.",
     example:
-      "When AgNO3(aq) and NaCl(aq) are mixed, AgCl(s) forms as a white precipitate. In a titration, hydrochloric acid and sodium hydroxide neutralise to form sodium chloride and water. In redox, zinc displaces copper because zinc is oxidised more readily.",
+      "In a titration, a pipette measures 25.0 cm3 accurately, a burette gives the titre, and the calculation only works after converting cm3 to dm3 and using the balanced equation mole ratio.",
     steps: [
-      "Identify the reaction type: precipitation, acid-base, redox, volumetric analysis, or qualitative analysis.",
-      "Write correct formulae and a balanced equation before interpreting the chemistry.",
-      "Add state symbols and observations when the question is practical.",
-      "For precipitation, remove spectator ions to get the net ionic equation.",
-      "For acid-base, redox, titration, or qualitative analysis, explain the evidence and the chemical reasoning."
+      "Identify whether the question is reaction, calculation, practical, or structure-and-bonding.",
+      "Write correct formulae and a balanced equation before calculating.",
+      "Convert units carefully, especially cm3 to dm3.",
+      "For titration and salts, connect apparatus or method choice to accuracy, endpoint, solubility, or excess reactant.",
+      "For bonding, link the property to particles, lattice structure, and mobile or shared electrons."
     ],
     keyReminder:
-      "Precipitation is now one part of Sec 2 Chemistry II. If the student struggles, check whether the gap is in formulae, equations, observations, or the specific reaction type."
+      "Most Year 2 mistakes are not random: they usually come from one missing link in formulae, balancing, units, mole ratio, apparatus choice, or bonding structure."
   }
 };
 

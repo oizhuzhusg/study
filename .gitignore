@@ -1,4 +1,5 @@
 node_modules/
+.venv-ocr/
 .wrangler/
 .dev.vars
 .env

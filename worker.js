@@ -59,6 +59,49 @@ function isPlainObject(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
 
+function uniqueStrings(values) {
+  return Array.from(new Set(values.filter((value) => typeof value === "string" && value.trim()).map((value) => value.trim())));
+}
+
+function normalizeGeneratedRubric(rawRubric, referenceQuestion) {
+  const fallbackRubric = referenceQuestion.rubric ?? [];
+  if (!Array.isArray(rawRubric)) {
+    return fallbackRubric;
+  }
+  const fallbackSkills = uniqueStrings([
+    ...(referenceQuestion.focusSkills ?? []),
+    ...fallbackRubric.map((item) => item.skill)
+  ]);
+  const rubric = rawRubric
+    .slice(0, 8)
+    .map((item, index) => {
+      if (!isPlainObject(item)) {
+        return null;
+      }
+      const fallback = fallbackRubric[index] ?? fallbackRubric[0] ?? {};
+      const criterion = String(item.criterion ?? "").trim().slice(0, 220);
+      if (!criterion) {
+        return null;
+      }
+      const rawId = String(item.id || fallback.id || `generated_${index + 1}`)
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9_]+/g, "_")
+        .replace(/^_+|_+$/g, "")
+        .slice(0, 48);
+      const points = Number.isInteger(item.points) && item.points > 0 && item.points <= 5 ? item.points : fallback.points || 1;
+      const skill = fallbackSkills.includes(item.skill) ? item.skill : fallback.skill || fallbackSkills[0] || "explanation_quality";
+      return {
+        id: rawId || `generated_${index + 1}`,
+        skill,
+        points,
+        criterion
+      };
+    })
+    .filter(Boolean);
+  return rubric.length ? rubric : fallbackRubric;
+}
+
 function normalizeGeneratedQuestion(raw) {
   if (!isPlainObject(raw) || raw.generated !== true) {
     return null;
@@ -79,6 +122,8 @@ function normalizeGeneratedQuestion(raw) {
   if (!title || !prompt || !expectedAnswer) {
     return null;
   }
+  const rubric = normalizeGeneratedRubric(raw.rubric, referenceQuestion);
+  const focusSkills = uniqueStrings([...(referenceQuestion.focusSkills ?? []), ...rubric.map((item) => item.skill)]);
   return {
     ...referenceQuestion,
     id: raw.id,
@@ -86,6 +131,8 @@ function normalizeGeneratedQuestion(raw) {
     title,
     prompt,
     expectedAnswer,
+    rubric,
+    focusSkills,
     generated: true,
     referenceQuestionId: referenceQuestion.id
   };
@@ -189,6 +236,8 @@ async function maybeGenerateNextQuestion(env, question, grade, body, answeredQue
     title: variant.title,
     prompt: variant.prompt,
     expectedAnswer: variant.expectedAnswer,
+    rubric: variant.rubric,
+    focusSkills: uniqueStrings([...(target.referenceQuestion.focusSkills ?? []), ...(variant.rubric ?? []).map((item) => item.skill)]),
     generated: true,
     referenceQuestionId: target.referenceQuestion.id
   };
@@ -332,6 +381,8 @@ async function routeApi(request, env, ctx) {
           title: variant.title,
           prompt: variant.prompt,
           expectedAnswer: variant.expectedAnswer,
+          rubric: variant.rubric,
+          focusSkills: uniqueStrings([...(referenceQuestion.focusSkills ?? []), ...(variant.rubric ?? []).map((item) => item.skill)]),
           generated: true,
           referenceQuestionId: referenceQuestion.id
         })

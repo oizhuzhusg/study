@@ -63,13 +63,13 @@ export const questions = [
     rubric: [
       {
         id: "apparatus_pipette",
-        skill: "experimental_chemistry",
+        skill: "measurement_apparatus",
         points: 1,
         criterion: "Chooses a pipette."
       },
       {
         id: "accuracy_reason",
-        skill: "experimental_chemistry",
+        skill: "measurement_apparatus",
         points: 1,
         criterion: "Explains that a pipette measures a fixed volume more accurately."
       },
@@ -80,7 +80,7 @@ export const questions = [
         criterion: "Compares it clearly with less accurate apparatus."
       }
     ],
-    focusSkills: ["experimental_chemistry", "explanation_quality"]
+    focusSkills: ["measurement_apparatus", "experimental_chemistry", "explanation_quality"]
   },
   {
     id: "sec1_lab_002",
@@ -95,13 +95,13 @@ export const questions = [
     rubric: [
       {
         id: "apparatus_pipette",
-        skill: "experimental_chemistry",
+        skill: "measurement_apparatus",
         points: 1,
         criterion: "Chooses a pipette."
       },
       {
         id: "accuracy_reason",
-        skill: "experimental_chemistry",
+        skill: "measurement_apparatus",
         points: 1,
         criterion: "Explains that a pipette measures a fixed volume more accurately."
       },
@@ -112,7 +112,7 @@ export const questions = [
         criterion: "Compares it clearly with less accurate apparatus."
       }
     ],
-    focusSkills: ["experimental_chemistry", "explanation_quality"]
+    focusSkills: ["measurement_apparatus", "experimental_chemistry", "explanation_quality"]
   },
   {
     id: "sec1_particles_001",
@@ -370,15 +370,239 @@ export const questions = [
     focusSkills: ["observation_inference", "acid_base_basics", "experimental_chemistry"]
   },
   {
+    id: "sec1_inquiry_001",
+    topicId: "sec1_foundations",
+    type: "scientific_inquiry",
+    difficulty: "basic",
+    title: "Fair test variables",
+    prompt:
+      "A student wants to find out whether temperature affects how fast sugar dissolves in water.\n\n1. State the independent variable.\n2. State one variable that should be kept constant.\n3. Explain why only one variable should be changed.",
+    expectedAnswer:
+      "The independent variable is the temperature of the water. A controlled variable could be the amount of sugar, volume of water, stirring, or sugar particle size. Only one variable should be changed so any difference in dissolving time can be linked to temperature.",
+    rubric: [
+      {
+        id: "independent_temperature",
+        skill: "scientific_inquiry",
+        points: 1,
+        criterion: "Identifies temperature as the independent variable."
+      },
+      {
+        id: "controlled_variable",
+        skill: "scientific_inquiry",
+        points: 1,
+        criterion: "States a sensible controlled variable."
+      },
+      {
+        id: "fair_test_reason",
+        skill: "explanation_quality",
+        points: 1,
+        criterion: "Explains that changing only one variable makes the test fair."
+      }
+    ],
+    focusSkills: ["scientific_inquiry", "explanation_quality"]
+  },
+  {
+    id: "sec1_safety_001",
+    topicId: "sec1_foundations",
+    type: "lab_safety",
+    difficulty: "basic",
+    title: "Safe smelling",
+    prompt:
+      "A student needs to smell a liquid in the laboratory.\n\nWhat should the student do, and why is this safer than smelling directly?",
+    expectedAnswer:
+      "The student should waft the vapour gently towards the nose instead of smelling directly. This is safer because only a small amount of vapour is inhaled, reducing exposure to harmful fumes.",
+    rubric: [
+      {
+        id: "wafting",
+        skill: "lab_safety",
+        points: 1,
+        criterion: "States that the odour should be wafted towards the nose."
+      },
+      {
+        id: "avoid_direct_inhaling",
+        skill: "lab_safety",
+        points: 1,
+        criterion: "Explains that direct inhaling can expose the student to too much vapour."
+      },
+      {
+        id: "safety_reason",
+        skill: "explanation_quality",
+        points: 1,
+        criterion: "Gives a clear safety reason."
+      }
+    ],
+    focusSkills: ["lab_safety", "explanation_quality"]
+  },
+  {
+    id: "sec1_substances_001",
+    topicId: "sec1_foundations",
+    type: "substances",
+    difficulty: "basic",
+    title: "Element, compound, or mixture",
+    prompt:
+      "Classify each substance as an element, compound, or mixture. Explain one of your choices.\n\n1. Oxygen gas, O2\n2. Water, H2O\n3. Air",
+    expectedAnswer:
+      "Oxygen gas is an element because it contains only oxygen atoms. Water is a compound because hydrogen and oxygen are chemically combined. Air is a mixture because it contains several gases not chemically combined.",
+    rubric: [
+      {
+        id: "oxygen_element",
+        skill: "elements_periodic_table",
+        points: 1,
+        criterion: "Classifies oxygen gas as an element."
+      },
+      {
+        id: "water_compound",
+        skill: "substances_mixtures",
+        points: 1,
+        criterion: "Classifies water as a compound."
+      },
+      {
+        id: "air_mixture",
+        skill: "substances_mixtures",
+        points: 1,
+        criterion: "Classifies air as a mixture and explains that the gases are not chemically combined."
+      }
+    ],
+    focusSkills: ["elements_periodic_table", "substances_mixtures", "explanation_quality"]
+  },
+  {
+    id: "sec1_separation_001",
+    topicId: "sec1_foundations",
+    type: "separation",
+    difficulty: "basic",
+    title: "Choose a separation method",
+    prompt:
+      "A mixture contains sand, salt, and water.\n\nDescribe how to obtain dry salt from the mixture. Name the separation methods used.",
+    expectedAnswer:
+      "Filter the mixture to remove the sand. Then evaporate some water from the salt solution and allow crystallisation to obtain dry salt crystals.",
+    rubric: [
+      {
+        id: "filter_sand",
+        skill: "separation_methods",
+        points: 1,
+        criterion: "Uses filtration to remove insoluble sand."
+      },
+      {
+        id: "evaporate_crystallise",
+        skill: "separation_methods",
+        points: 1,
+        criterion: "Uses evaporation and crystallisation to obtain salt."
+      },
+      {
+        id: "property_reason",
+        skill: "explanation_quality",
+        points: 1,
+        criterion: "Links the methods to insolubility of sand and solubility of salt."
+      }
+    ],
+    focusSkills: ["separation_methods", "explanation_quality"]
+  },
+  {
+    id: "sec1_atomic_001",
+    topicId: "sec1_foundations",
+    type: "atomic_structure",
+    difficulty: "basic",
+    title: "Subatomic particles",
+    prompt:
+      "A neutral atom has proton number 11 and nucleon number 23.\n\n1. How many protons does it have?\n2. How many electrons does it have?\n3. How many neutrons does it have?",
+    expectedAnswer:
+      "It has 11 protons. A neutral atom has 11 electrons. Neutrons = 23 - 11 = 12.",
+    rubric: [
+      {
+        id: "protons",
+        skill: "atomic_structure",
+        points: 1,
+        criterion: "States that proton number gives 11 protons."
+      },
+      {
+        id: "electrons",
+        skill: "atomic_structure",
+        points: 1,
+        criterion: "States that a neutral atom has 11 electrons."
+      },
+      {
+        id: "neutrons",
+        skill: "atomic_structure",
+        points: 1,
+        criterion: "Calculates 12 neutrons."
+      }
+    ],
+    focusSkills: ["atomic_structure"]
+  },
+  {
+    id: "sec1_ionic_bonding_001",
+    topicId: "sec1_foundations",
+    type: "ionic_bonding",
+    difficulty: "basic",
+    title: "Ionic bond formation",
+    prompt:
+      "Sodium reacts with chlorine to form sodium chloride.\n\nExplain how the ionic bond forms in terms of electron transfer and attraction.",
+    expectedAnswer:
+      "A sodium atom transfers one electron to a chlorine atom. Sodium becomes Na+ and chlorine becomes Cl-. The ionic bond is the electrostatic attraction between the oppositely charged ions.",
+    rubric: [
+      {
+        id: "electron_transfer",
+        skill: "ionic_bonding",
+        points: 1,
+        criterion: "Explains that an electron is transferred from sodium to chlorine."
+      },
+      {
+        id: "ions_formed",
+        skill: "ions_charges",
+        points: 1,
+        criterion: "Identifies Na+ and Cl- ions."
+      },
+      {
+        id: "attraction",
+        skill: "ionic_bonding",
+        points: 1,
+        criterion: "Defines the bond as attraction between oppositely charged ions."
+      }
+    ],
+    focusSkills: ["ionic_bonding", "ions_charges", "chemical_bonding"]
+  },
+  {
+    id: "sec1_covalent_bonding_001",
+    topicId: "sec1_foundations",
+    type: "covalent_bonding",
+    difficulty: "basic",
+    title: "Covalent bond formation",
+    prompt:
+      "Chlorine gas exists as Cl2 molecules.\n\nExplain how the covalent bond forms between two chlorine atoms.",
+    expectedAnswer:
+      "Each chlorine atom shares one electron with the other chlorine atom. The shared pair of electrons is attracted to both nuclei, forming a covalent bond.",
+    rubric: [
+      {
+        id: "electron_sharing",
+        skill: "covalent_bonding",
+        points: 1,
+        criterion: "States that the atoms share electrons."
+      },
+      {
+        id: "shared_pair",
+        skill: "covalent_bonding",
+        points: 1,
+        criterion: "Identifies a shared pair of electrons."
+      },
+      {
+        id: "both_nuclei",
+        skill: "chemical_bonding",
+        points: 1,
+        criterion: "Explains attraction between the shared electrons and both nuclei."
+      }
+    ],
+    focusSkills: ["covalent_bonding", "chemical_bonding"]
+  },
+  {
     id: "sec2_diag_001",
     topicId: "sec2_chemistry_ii",
     type: "diagnostic",
     difficulty: "diagnostic",
-    title: "Sec 2 reaction map",
+    title: "Sec 2 map check",
     prompt:
-      "Classify each situation and give the key evidence.\n\n1. Mixing two clear solutions gives a white solid.\n2. Hydrochloric acid is titrated with sodium hydroxide using an indicator.\n3. Zinc is placed in copper(II) sulfate solution and a brown solid forms.",
+      "Answer briefly.\n\n1. Mixing two clear solutions gives a white solid. What type of reaction is this?\n2. In a calculation, what is 25.0 cm3 in dm3?\n3. In a titration, what apparatus gives the titre?\n4. Diamond has a very high melting point. Which structure idea explains this?\n5. Zinc is placed in copper(II) sulfate solution and a brown solid forms. What type of reaction is this?",
     expectedAnswer:
-      "1. Precipitation: an insoluble white solid forms. 2. Acid-base neutralisation / volumetric analysis: acid and alkali react, and the indicator endpoint shows the neutralisation point. 3. Redox displacement: zinc displaces copper; zinc is oxidised and copper(II) ions are reduced to copper metal.",
+      "1. Precipitation: an insoluble solid forms. 2. 25.0 cm3 is 0.0250 dm3. 3. The burette gives the titre. 4. Diamond is a giant covalent structure with many strong covalent bonds. 5. This is a redox displacement reaction.",
     rubric: [
       {
         id: "classify_precipitation",
@@ -387,16 +611,22 @@ export const questions = [
         criterion: "Classifies the white solid situation as precipitation."
       },
       {
-        id: "classify_titration",
-        skill: "volumetric_analysis",
+        id: "cm3_to_dm3",
+        skill: "concentration_calculation",
         points: 1,
-        criterion: "Classifies the acid-alkali indicator situation as titration or volumetric analysis."
+        criterion: "Converts 25.0 cm3 to 0.0250 dm3."
       },
       {
-        id: "neutralisation",
-        skill: "acid_base_reactions",
+        id: "burette_titre",
+        skill: "volumetric_analysis",
         points: 1,
-        criterion: "Identifies acid + alkali as neutralisation."
+        criterion: "Identifies the burette as the apparatus used to obtain the titre."
+      },
+      {
+        id: "giant_covalent_structure",
+        skill: "giant_covalent",
+        points: 1,
+        criterion: "Explains diamond's high melting point using giant covalent structure or many strong covalent bonds."
       },
       {
         id: "classify_redox",
@@ -413,15 +643,17 @@ export const questions = [
     ],
     focusSkills: [
       "precipitate_concept",
+      "concentration_calculation",
       "volumetric_analysis",
-      "acid_base_reactions",
+      "giant_covalent",
       "redox_concepts",
       "observation_inference"
     ],
     nextByWeakSkill: {
       precipitate_concept: "ppt_concept_001",
+      concentration_calculation: "sec2_concentration_001",
       volumetric_analysis: "sec2_titration_001",
-      acid_base_reactions: "sec2_acid_base_001",
+      giant_covalent: "sec2_giant_covalent_001",
       redox_concepts: "sec2_redox_001",
       observation_inference: "sec2_qa_001"
     }
@@ -631,13 +863,13 @@ export const questions = [
     rubric: [
       {
         id: "apparatus_pipette",
-        skill: "experimental_chemistry",
+        skill: "measurement_apparatus",
         points: 1,
         criterion: "Chooses a pipette."
       },
       {
         id: "accuracy_reason",
-        skill: "experimental_chemistry",
+        skill: "measurement_apparatus",
         points: 1,
         criterion: "Explains that a pipette measures a fixed volume more accurately."
       },
@@ -648,7 +880,7 @@ export const questions = [
         criterion: "Explains that a burette accurately delivers/measures variable volume."
       }
     ],
-    focusSkills: ["volumetric_analysis", "experimental_chemistry"]
+    focusSkills: ["volumetric_analysis", "measurement_apparatus", "experimental_chemistry"]
   },
   {
     id: "sec2_titre_calc_001",
@@ -681,6 +913,230 @@ export const questions = [
       }
     ],
     focusSkills: ["titration_calculation", "balancing"]
+  },
+  {
+    id: "sec2_mole_001",
+    topicId: "sec2_chemistry_ii",
+    type: "mole_concept",
+    difficulty: "basic",
+    title: "Particles to moles",
+    prompt:
+      "A sample contains 1.204 x 10^23 argon atoms.\n\nUsing Avogadro constant = 6.02 x 10^23 mol-1, calculate the amount of argon in moles.",
+    expectedAnswer:
+      "Amount = number of particles / Avogadro constant = 1.204 x 10^23 / 6.02 x 10^23 = 0.200 mol.",
+    rubric: [
+      {
+        id: "uses_avogadro",
+        skill: "mole_concept",
+        points: 1,
+        criterion: "Uses Avogadro constant to convert particles to moles."
+      },
+      {
+        id: "division",
+        skill: "mole_concept",
+        points: 1,
+        criterion: "Divides number of particles by 6.02 x 10^23."
+      },
+      {
+        id: "answer_moles",
+        skill: "mole_concept",
+        points: 1,
+        criterion: "Calculates 0.200 mol with suitable units."
+      }
+    ],
+    focusSkills: ["mole_concept", "explanation_quality"]
+  },
+  {
+    id: "sec2_calc_001",
+    topicId: "sec2_chemistry_ii",
+    type: "chemical_calculation",
+    difficulty: "medium",
+    title: "Reacting mass from equation",
+    prompt:
+      "Magnesium reacts with hydrochloric acid:\n\nMg + 2HCl -> MgCl2 + H2\n\nCalculate the mass of magnesium needed to produce 0.0500 mol of hydrogen gas. Relative atomic mass: Mg = 24.3.",
+    expectedAnswer:
+      "The mole ratio Mg:H2 is 1:1, so 0.0500 mol of Mg is needed. Mass = moles x molar mass = 0.0500 x 24.3 = 1.215 g, about 1.22 g.",
+    rubric: [
+      {
+        id: "ratio",
+        skill: "chemical_calculation",
+        points: 1,
+        criterion: "Uses the 1:1 mole ratio between Mg and H2."
+      },
+      {
+        id: "moles_mg",
+        skill: "chemical_calculation",
+        points: 1,
+        criterion: "States that 0.0500 mol of Mg is required."
+      },
+      {
+        id: "mass",
+        skill: "mole_concept",
+        points: 1,
+        criterion: "Calculates mass using moles x molar mass."
+      }
+    ],
+    focusSkills: ["chemical_calculation", "mole_concept", "balancing"]
+  },
+  {
+    id: "sec2_concentration_001",
+    topicId: "sec2_chemistry_ii",
+    type: "concentration",
+    difficulty: "basic",
+    title: "Concentration and volume units",
+    prompt:
+      "A solution contains 0.0200 mol of sodium hydroxide in 250 cm3 of solution.\n\nCalculate the concentration in mol/dm3.",
+    expectedAnswer:
+      "250 cm3 = 0.250 dm3. Concentration = moles / volume = 0.0200 / 0.250 = 0.0800 mol/dm3.",
+    rubric: [
+      {
+        id: "volume_conversion",
+        skill: "concentration_calculation",
+        points: 1,
+        criterion: "Converts 250 cm3 to 0.250 dm3."
+      },
+      {
+        id: "concentration_formula",
+        skill: "concentration_calculation",
+        points: 1,
+        criterion: "Uses concentration = moles / volume."
+      },
+      {
+        id: "concentration_answer",
+        skill: "concentration_calculation",
+        points: 1,
+        criterion: "Calculates 0.0800 mol/dm3."
+      }
+    ],
+    focusSkills: ["concentration_calculation", "titration_calculation"]
+  },
+  {
+    id: "sec2_acid_ionic_001",
+    topicId: "sec2_chemistry_ii",
+    type: "acid_base_ionic",
+    difficulty: "medium",
+    title: "Ionic equation for neutralisation",
+    prompt:
+      "Hydrochloric acid reacts with sodium hydroxide solution.\n\n1. Write the balanced molecular equation with state symbols.\n2. Write the net ionic equation.",
+    expectedAnswer:
+      "Molecular: HCl(aq) + NaOH(aq) -> NaCl(aq) + H2O(l). Net ionic: H+(aq) + OH-(aq) -> H2O(l).",
+    rubric: [
+      {
+        id: "molecular_equation",
+        skill: "acid_base_reactions",
+        points: 1,
+        criterion: "Writes the correct molecular neutralisation equation."
+      },
+      {
+        id: "state_symbols",
+        skill: "state_symbols",
+        points: 1,
+        criterion: "Uses correct state symbols."
+      },
+      {
+        id: "net_ionic",
+        skill: "ionic_equation",
+        points: 1,
+        criterion: "Writes H+(aq) + OH-(aq) -> H2O(l)."
+      }
+    ],
+    focusSkills: ["acid_base_reactions", "state_symbols", "ionic_equation"]
+  },
+  {
+    id: "sec2_salt_method_001",
+    topicId: "sec2_chemistry_ii",
+    type: "salt_preparation",
+    difficulty: "medium",
+    title: "Choose a salt preparation method",
+    prompt:
+      "A student wants to prepare dry crystals of potassium nitrate. Both nitric acid and potassium hydroxide are soluble.\n\nWhich method should be used, and why is excess solid not suitable here?",
+    expectedAnswer:
+      "Use titration to find the exact volumes of nitric acid and potassium hydroxide, then repeat without indicator and crystallise the salt solution. Excess solid is not suitable because both reactants are soluble, so excess reactant cannot be removed by filtration.",
+    rubric: [
+      {
+        id: "titration_method",
+        skill: "salt_preparation",
+        points: 1,
+        criterion: "Chooses titration for preparing a soluble salt from two soluble reactants."
+      },
+      {
+        id: "repeat_without_indicator",
+        skill: "volumetric_analysis",
+        points: 1,
+        criterion: "Mentions repeating the exact volumes without indicator before crystallising."
+      },
+      {
+        id: "no_excess_solid",
+        skill: "explanation_quality",
+        points: 1,
+        criterion: "Explains that excess soluble reactant cannot be removed by filtration."
+      }
+    ],
+    focusSkills: ["salt_preparation", "volumetric_analysis", "explanation_quality"]
+  },
+  {
+    id: "sec2_metallic_001",
+    topicId: "sec2_chemistry_ii",
+    type: "metallic_bonding",
+    difficulty: "basic",
+    title: "Why metals conduct",
+    prompt:
+      "Use metallic bonding to explain why solid metals conduct electricity.",
+    expectedAnswer:
+      "Metals have a lattice of positive metal ions surrounded by delocalised electrons. The delocalised electrons are mobile and can carry charge through the solid.",
+    rubric: [
+      {
+        id: "positive_ions",
+        skill: "metallic_bonding",
+        points: 1,
+        criterion: "Describes positive metal ions in a lattice."
+      },
+      {
+        id: "delocalised_electrons",
+        skill: "metallic_bonding",
+        points: 1,
+        criterion: "Mentions delocalised electrons."
+      },
+      {
+        id: "mobile_charge",
+        skill: "explanation_quality",
+        points: 1,
+        criterion: "Links mobile electrons to electrical conductivity."
+      }
+    ],
+    focusSkills: ["metallic_bonding", "explanation_quality"]
+  },
+  {
+    id: "sec2_giant_covalent_001",
+    topicId: "sec2_chemistry_ii",
+    type: "giant_covalent",
+    difficulty: "basic",
+    title: "Diamond melting point",
+    prompt:
+      "Diamond has a very high melting point.\n\nExplain this using its structure and bonding.",
+    expectedAnswer:
+      "Diamond has a giant covalent structure. Each carbon atom is covalently bonded to other carbon atoms in a strong network. A lot of energy is needed to break many strong covalent bonds, so the melting point is very high.",
+    rubric: [
+      {
+        id: "giant_structure",
+        skill: "giant_covalent",
+        points: 1,
+        criterion: "Identifies diamond as a giant covalent structure."
+      },
+      {
+        id: "many_strong_bonds",
+        skill: "giant_covalent",
+        points: 1,
+        criterion: "Explains that many strong covalent bonds must be broken."
+      },
+      {
+        id: "energy_link",
+        skill: "explanation_quality",
+        points: 1,
+        criterion: "Links high energy required to high melting point."
+      }
+    ],
+    focusSkills: ["giant_covalent", "chemical_bonding", "explanation_quality"]
   },
   {
     id: "sec2_qa_001",
@@ -1224,19 +1680,33 @@ export function firstQuestionForTopic(topicId) {
 }
 
 const firstQuestionBySkill = {
+  scientific_inquiry: "sec1_inquiry_001",
+  lab_safety: "sec1_safety_001",
+  measurement_apparatus: "sec1_lab_001",
   experimental_chemistry: "sec1_lab_001",
   kinetic_theory: "sec1_particles_001",
+  elements_periodic_table: "sec1_substances_001",
+  substances_mixtures: "sec1_substances_001",
+  separation_methods: "sec1_separation_001",
+  atomic_structure: "sec1_atomic_001",
   ions_charges: "sec1_bonding_001",
-  chemical_bonding: "sec1_bonding_001",
+  ionic_bonding: "sec1_ionic_bonding_001",
+  covalent_bonding: "sec1_covalent_bonding_001",
+  chemical_bonding: "sec1_ionic_bonding_001",
   acid_base_basics: "sec1_acid_base_001",
   sec1_gap_diagnosis: "sec1_diag_001",
   acid_base_reactions: "sec2_acid_base_001",
   salt_preparation: "sec2_salt_prep_001",
+  mole_concept: "sec2_mole_001",
+  chemical_calculation: "sec2_calc_001",
+  concentration_calculation: "sec2_concentration_001",
   redox_concepts: "sec2_redox_001",
   oxidation_states: "sec2_oxidation_states_001",
   volumetric_analysis: "sec2_titration_001",
   titration_calculation: "sec2_titre_calc_001",
   qualitative_analysis: "sec2_qa_001",
+  metallic_bonding: "sec2_metallic_001",
+  giant_covalent: "sec2_giant_covalent_001",
   precipitate_concept: "ppt_concept_001",
   solubility_prediction: "ppt_solubility_001",
   formulae: "ppt_formulae_001",
@@ -1263,12 +1733,19 @@ export function firstQuestionForSkill(skillId, topicId = "sec2_chemistry_ii") {
 function orderedQuestionIdsForTopic(targetTopicId, topicQuestions) {
   const orderedByTopic = {
     sec1_foundations: [
+      "sec1_inquiry_001",
+      "sec1_safety_001",
       "sec1_lab_001",
       "sec1_lab_002",
       "sec1_particles_001",
       "sec1_particles_002",
       "sec1_particles_003",
+      "sec1_substances_001",
+      "sec1_separation_001",
+      "sec1_atomic_001",
       "sec1_bonding_001",
+      "sec1_ionic_bonding_001",
+      "sec1_covalent_bonding_001",
       "sec1_equations_001",
       "sec1_acid_base_001",
       "sec1_acid_base_002",
@@ -1276,11 +1753,19 @@ function orderedQuestionIdsForTopic(targetTopicId, topicQuestions) {
     ],
     sec2_chemistry_ii: [
       "sec2_acid_base_001",
-      "sec2_redox_001",
-      "sec2_redox_002",
+      "sec2_acid_ionic_001",
+      "sec2_mole_001",
+      "sec2_calc_001",
+      "sec2_concentration_001",
       "sec2_titration_001",
       "sec2_titration_002",
-      "sec2_qa_001",
+      "sec2_titre_calc_001",
+      "sec2_salt_prep_001",
+      "sec2_salt_method_001",
+      "sec2_metallic_001",
+      "sec2_giant_covalent_001",
+      "ppt_concept_001",
+      "ppt_concept_bridge_001",
       "ppt_agcl_001",
       "ppt_agcl_002",
       "ppt_solubility_001",
@@ -1288,9 +1773,10 @@ function orderedQuestionIdsForTopic(targetTopicId, topicQuestions) {
       "ppt_spectators_001",
       "ppt_ionic_001",
       "ppt_mixed_001",
-      "sec2_salt_prep_001",
+      "sec2_redox_001",
+      "sec2_redox_002",
       "sec2_oxidation_states_001",
-      "sec2_titre_calc_001"
+      "sec2_qa_001"
     ]
   };
   const preferred = orderedByTopic[targetTopicId] ?? [];
